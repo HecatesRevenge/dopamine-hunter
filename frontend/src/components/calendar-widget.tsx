@@ -1,6 +1,10 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Calendar, Plus, ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -26,29 +30,76 @@ export function CalendarWidget({ className }: CalendarWidgetProps) {
   });
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [expandedDay, setExpandedDay] = useState<Date | null>(null); // Track which day is expanded
-  const [tasks, setTasks] = useState<Task[]>([
-    {
-      id: "1",
-      title: "Morning workout",
+  const [isAddTaskOpen, setIsAddTaskOpen] = useState(false);
+  const [newTask, setNewTask] = useState({
+    title: "",
+    date: new Date(),
+    time: "09:00",
+    ampm: "AM"
+  });
+  const [tasks, setTasks] = useState<Task[]>([]);
+
+  // Convert 24h time to 12h AM/PM format
+  const convertTo12Hour = (time24: string) => {
+    const [hours, minutes] = time24.split(':');
+    const hour = parseInt(hours);
+    const ampm = hour >= 12 ? 'PM' : 'AM';
+    const hour12 = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
+    return { time: `${hour12}:${minutes}`, ampm };
+  };
+
+  // Convert 12h AM/PM time to 24h format
+  const convertTo24Hour = (time12: string, ampm: string) => {
+    const [hours, minutes] = time12.split(':');
+    let hour = parseInt(hours);
+
+    if (ampm === 'AM' && hour === 12) {
+      hour = 0;
+    } else if (ampm === 'PM' && hour !== 12) {
+      hour += 12;
+    }
+
+    return `${hour.toString().padStart(2, '0')}:${minutes}`;
+  };
+
+  // Format time for display
+  const formatTimeForDisplay = (time24: string) => {
+    const { time, ampm } = convertTo12Hour(time24);
+    return `${time} ${ampm}`;
+  };
+
+  // Add new task
+  const handleAddTask = () => {
+    const time24 = convertTo24Hour(newTask.time, newTask.ampm);
+    const task: Task = {
+      id: Date.now().toString(),
+      title: newTask.title,
+      date: new Date(newTask.date),
+      time: time24,
+      completed: false
+    };
+
+    setTasks(prev => [...prev, task]);
+    setNewTask({
+      title: "",
       date: new Date(),
-      time: "08:00",
-      completed: false,
-    },
-    {
-      id: "2", 
-      title: "Team meeting",
-      date: new Date(),
-      time: "10:30",
-      completed: false,
-    },
-    {
-      id: "3",
-      title: "Project review",
-      date: new Date(Date.now() + 86400000), // Tomorrow
-      time: "14:00",
-      completed: false,
-    },
-  ]);
+      time: "09:00",
+      ampm: "AM"
+    });
+    setIsAddTaskOpen(false);
+  };
+
+  // Generate time options for select
+  const generateTimeOptions = () => {
+    const times = [];
+    for (let hour = 1; hour <= 12; hour++) {
+      for (let minute = 0; minute < 60; minute += 30) {
+        const timeStr = `${hour}:${minute.toString().padStart(2, '0')}`;
+        times.push(timeStr);
+      }
+    }
+    return times;
+  };
 
   const getWeekDays = () => {
     const days = [];
@@ -223,7 +274,7 @@ export function CalendarWidget({ className }: CalendarWidgetProps) {
                           </div>
                           {dayTasks.slice(0, 2).map(task => (
                             <div key={task.id} className="text-xs text-primary/80 truncate">
-                              {task.time} {task.title}
+                              {formatTimeForDisplay(task.time)} {task.title}
                             </div>
                           ))}
                           {dayTasks.length > 2 && (
@@ -276,14 +327,98 @@ export function CalendarWidget({ className }: CalendarWidgetProps) {
           <Calendar className="w-5 h-5 text-primary" />
           <h3 className="font-semibold">Calendar</h3>
         </div>
-        <Button
-          variant="outline"
-          size="sm"
-          className="bg-ocean text-white border-primary hover:bg-primary-dark"
-        >
-          <Plus className="w-4 h-4 mr-2" />
-          Add Task
-        </Button>
+        <Dialog open={isAddTaskOpen} onOpenChange={setIsAddTaskOpen}>
+          <DialogTrigger asChild>
+            <Button
+              variant="outline"
+              size="sm"
+              className="bg-ocean text-white border-primary hover:bg-primary-dark"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Add Task
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>Add New Task</DialogTitle>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="title" className="text-right">
+                  Title
+                </Label>
+                <Input
+                  id="title"
+                  value={newTask.title}
+                  onChange={(e) => setNewTask(prev => ({ ...prev, title: e.target.value }))}
+                  className="col-span-3"
+                  placeholder="Enter task title"
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="date" className="text-right">
+                  Date
+                </Label>
+                <Input
+                  id="date"
+                  type="date"
+                  value={newTask.date.toISOString().split('T')[0]}
+                  onChange={(e) => setNewTask(prev => ({ ...prev, date: new Date(e.target.value) }))}
+                  className="col-span-3"
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="time" className="text-right">
+                  Time
+                </Label>
+                <div className="col-span-3 flex gap-2">
+                  <Select
+                    value={newTask.time}
+                    onValueChange={(value) => setNewTask(prev => ({ ...prev, time: value }))}
+                  >
+                    <SelectTrigger className="flex-1">
+                      <SelectValue placeholder="Select time" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {generateTimeOptions().map((time) => (
+                        <SelectItem key={time} value={time}>
+                          {time}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <Select
+                    value={newTask.ampm}
+                    onValueChange={(value) => setNewTask(prev => ({ ...prev, ampm: value }))}
+                  >
+                    <SelectTrigger className="w-20">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="AM">AM</SelectItem>
+                      <SelectItem value="PM">PM</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </div>
+            <div className="flex justify-end gap-2">
+              <Button
+                variant="outline"
+                onClick={() => setIsAddTaskOpen(false)}
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleAddTask}
+                disabled={!newTask.title.trim()}
+                className="bg-ocean hover:bg-primary-dark"
+              >
+                Add Task
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
 
       {/* Week Navigation Header */}
@@ -371,8 +506,8 @@ export function CalendarWidget({ className }: CalendarWidgetProps) {
                     ));
                   }}
                 />
-                <span className="text-xs text-muted-foreground min-w-12">
-                  {task.time}
+                <span className="text-xs text-muted-foreground min-w-16">
+                  {formatTimeForDisplay(task.time)}
                 </span>
                 <span className={task.completed ? "line-through text-muted-foreground" : ""}>
                   {task.title}

@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu, User, Home, Target, Trophy, Gamepad2, Palette, Info } from "lucide-react";
+import { Menu, User, Home, Target, Trophy, Gamepad2, Palette, Info, Moon, Sun } from "lucide-react";
 import { ThemeToggle } from "./theme-toggle";
 import { QuickAccessDrawer } from "./quick-access-drawer";
 import goldfishLogo from "@/assets/goldfish-logo.png";
@@ -23,9 +23,40 @@ interface NavigationProps {
 
 export function Navigation({ currentPage = "home", onNavigate }: NavigationProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [isDark, setIsDark] = useState(true);
+
+  useEffect(() => {
+    // Default to dark theme, only switch to light if explicitly saved
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme === "light") {
+      setIsDark(false);
+      document.documentElement.classList.remove("dark");
+    } else {
+      // Default to dark theme
+      setIsDark(true);
+      document.documentElement.classList.add("dark");
+      // Set localStorage to dark if no preference saved
+      if (!savedTheme) {
+        localStorage.setItem("theme", "dark");
+      }
+    }
+  }, []);
 
   const handleNavigate = (pageId: string) => {
-    onNavigate?.(pageId);
+    if (pageId === "appearance") {
+      // Toggle theme instead of navigating
+      const newTheme = !isDark;
+      setIsDark(newTheme);
+      if (newTheme) {
+        document.documentElement.classList.add("dark");
+        localStorage.setItem("theme", "dark");
+      } else {
+        document.documentElement.classList.remove("dark");
+        localStorage.setItem("theme", "light");
+      }
+    } else {
+      onNavigate?.(pageId);
+    }
     setIsOpen(false);
   };
 
@@ -58,7 +89,11 @@ export function Navigation({ currentPage = "home", onNavigate }: NavigationProps
                   onClick={() => handleNavigate(item.id)}
                 >
                   <div className={`w-10 h-10 rounded-full ${item.color} flex items-center justify-center mr-4`}>
-                    <item.icon className="w-5 h-5 text-white" />
+                    {item.id === "appearance" ? (
+                      isDark ? <Sun className="w-5 h-5 text-white" /> : <Moon className="w-5 h-5 text-white" />
+                    ) : (
+                      <item.icon className="w-5 h-5 text-white" />
+                    )}
                   </div>
                   <span className="text-lg font-medium">{item.label}</span>
                 </Button>
@@ -73,41 +108,46 @@ export function Navigation({ currentPage = "home", onNavigate }: NavigationProps
           <QuickAccessDrawer />
         </div>
 
-        {/* Desktop Navigation & Theme Toggle */}
+        {/* Desktop Hamburger Menu & Profile */}
         <div className="hidden md:flex items-center gap-2">
-          {["pathways", "achievements", "minigame"].map((item) => {
-            const navItem = navigationItems.find(nav => nav.id === item);
-            if (!navItem) return null;
-            
-            return (
-              <Button
-                key={item}
-                variant="ghost"
-                className={`nav-item ${currentPage === item ? 'active' : ''}`}
-                onClick={() => handleNavigate(item)}
-              >
-                <navItem.icon className="w-4 h-4 mr-2" />
-                {navItem.label}
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="icon">
+                <Menu className="w-6 h-6" />
               </Button>
-            );
-          })}
-          <ThemeToggle />
+            </SheetTrigger>
+            <SheetContent side="right" className="w-80 bg-background/95 backdrop-blur-md">
+              <div className="flex flex-col gap-4 mt-8">
+                {navigationItems.map((item) => (
+                  <Button
+                    key={item.id}
+                    variant="ghost"
+                    className={`nav-item justify-start h-14 ${currentPage === item.id ? 'active' : ''}`}
+                    onClick={() => handleNavigate(item.id)}
+                  >
+                    <div className={`w-10 h-10 rounded-full ${item.color} flex items-center justify-center mr-4`}>
+                      {item.id === "appearance" ? (
+                        isDark ? <Sun className="w-5 h-5 text-white" /> : <Moon className="w-5 h-5 text-white" />
+                      ) : (
+                        <item.icon className="w-5 h-5 text-white" />
+                      )}
+                    </div>
+                    <span className="text-lg font-medium">{item.label}</span>
+                  </Button>
+                ))}
+              </div>
+            </SheetContent>
+          </Sheet>
+          
+          <Button
+            variant="ghost"
+            size="icon"
+            className="w-12 h-12 rounded-full bg-muted hover:bg-muted/80"
+            onClick={() => handleNavigate("profile")}
+          >
+            <User className="w-6 h-6" />
+          </Button>
         </div>
-
-        {/* Mobile Theme Toggle Only */}
-        <div className="flex items-center gap-2 md:hidden">
-          <ThemeToggle />
-        </div>
-
-        {/* User Profile Button (Desktop) */}
-        <Button
-          variant="ghost"
-          size="icon"
-          className="hidden md:flex w-12 h-12 rounded-full bg-muted hover:bg-muted/80"
-          onClick={() => handleNavigate("profile")}
-        >
-          <User className="w-6 h-6" />
-        </Button>
       </div>
     </div>
   );

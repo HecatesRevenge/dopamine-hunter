@@ -12,6 +12,7 @@
  */
 
 import { useState, useEffect } from "react";
+import { Footer } from "@/components/ui/footer";
 import { Navigation } from "@/components/ui/navigation";
 import { CalendarWidget } from "@/components/calendar-widget";
 import { FocusTimer } from "@/components/ui/focus-timer";
@@ -113,14 +114,14 @@ const Home = () => {
     { id: "1", title: "First Steps", description: "Complete your first task", isUnlocked: true, icon: "star" as const },
     { id: "2", title: "Streak Master", description: "Maintain a 7-day streak", isUnlocked: true, icon: "trophy" as const },
     { id: "3", title: "Focus Champion", description: "Complete 10 focus sessions", isUnlocked: false, icon: "target" as const },
-    { id: "4", title: "Early Bird", description: "Complete morning routine 5 times", isUnlocked: false, icon: "zap" as const },
+    { id: "4", title: "Early Bird", description: "Complete self care routine 5 times", isUnlocked: false, icon: "zap" as const },
   ];
 
   // Calculate streak progress (cap at 100% for display, target of 30 days for "mastery")
   const streakProgress = Math.min((streakData.currentDailyStreak / 30) * 100, 100);
 
   const inProgressTasks = [
-    { title: "Morning Routine", progress: 75, color: "success" as const },
+    { title: "Self Care", progress: 75, color: "success" as const },
     { title: "Study Session", progress: 45, color: "primary" as const },
     { title: "Cleaning Path", progress: 90, color: "accent" as const },
     {
@@ -137,14 +138,12 @@ const Home = () => {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      
       <Navigation currentPage={currentPage} onNavigate={setCurrentPage} />
-      
+
       <main className="pt-24 px-4 pb-8">
         <div className="max-w-7xl mx-auto">
           {/* Welcome Section - keeping padding structure */}
-          <div className="mb-8">
-          </div>
+          <div className="mb-8"></div>
 
           {/* In-Progress Tasks */}
           <Card className="glass-card p-6 mb-6">
@@ -158,7 +157,7 @@ const Home = () => {
                 <ChevronRight className="w-4 h-4 ml-1" />
               </Button>
             </div>
-            
+
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {inProgressTasks.map((task, index) => (
                 <ProgressRing
@@ -179,33 +178,8 @@ const Home = () => {
             <CalendarWidget />
           </div>
 
-          {/* Quick Actions */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Button 
-              className="h-16 bg-primary hover:bg-primary-dark text-primary-foreground border-primary"
-              onClick={() => setCurrentPage("pathways")}
-            >
-              <Target className="w-5 h-5 mr-2" />
-              View Pathways
-            </Button>
-            
-            <Button 
-              className="h-16 bg-success hover:bg-success/90 text-success-foreground border-success"
-              onClick={() => setCurrentPage("achievements")}
-            >
-              <Trophy className="w-5 h-5 mr-2" />
-              Achievements
-            </Button>
-            
-            <Button 
-              className="h-16 bg-accent hover:bg-accent/90 text-accent-foreground border-accent"
-              onClick={() => setCurrentPage("minigame")}
-            >
-              <Zap className="w-5 h-5 mr-2" />
-              Fish Minigame
-            </Button>
-          </div>
         </div>
+        <Footer onNavigate={setCurrentPage} />
       </main>
     </div>
   );

@@ -23,7 +23,7 @@ const iconMap = {
 
 // Custom image icons
 const customIconMap = {
-  "first-task": "/placeholders/achievements/achievement-first-task-32x32.png",
+  "first-task": "/placeholders/achievements/bronze_32x32.png",
   "gold": "/placeholders/achievements/gold_1_32x32.png",
   "silver": "/placeholders/achievements/silver_1_32x32.png",
 };
