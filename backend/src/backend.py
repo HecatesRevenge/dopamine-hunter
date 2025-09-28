@@ -60,4 +60,64 @@ class StreakAchievementSchema(AchievementSchema):
 
 class TotalTasksAchievementSchema(AchievementSchema):
     total_required: int
-    total_completed: int # making a change
+    total_completed: int
+
+# In-memory storage
+streak_achievements = []
+total_task_achievements = []
+
+# -------------------------
+# Create new streak achievement
+# -------------------------
+@app.post("/streak_achievements", response_model=StreakAchievementSchema)
+def create_streak_achievement(title: str, description: str, streak_required: int):
+    ach = StreakAchievement(title, description, streak_required)
+    streak_achievements.append(ach)
+    return ach
+
+# -------------------------
+# Create new total tasks achievement
+# -------------------------
+@app.post("/total_task_achievements", response_model=TotalTasksAchievementSchema)
+def create_total_task_achievement(title: str, description: str, total_required: int):
+    ach = TotalTasksAchievement(title, description, total_required)
+    total_task_achievements.append(ach)
+    return ach
+
+# -------------------------
+# Update streak progress
+# -------------------------
+@app.post("/streak_achievements/{index}/update", response_model=StreakAchievementSchema)
+def update_streak(index: int, did_task_today: bool):
+    try:
+        ach = streak_achievements[index]
+        ach.update_streak(did_task_today)
+        return ach
+    except IndexError:
+        return {"error": "Achievement not found"}
+
+# -------------------------
+# Update total tasks progress
+# -------------------------
+@app.post("/total_task_achievements/{index}/update", response_model=TotalTasksAchievementSchema)
+def update_total_tasks(index: int, tasks_done_today: int):
+    try:
+        ach = total_task_achievements[index]
+        ach.update_total(tasks_done_today)
+        return ach
+    except IndexError:
+        return {"error": "Achievement not found"}
+
+# -------------------------
+# Get all streak achievements
+# -------------------------
+@app.get("/streak_achievements", response_model=list[StreakAchievementSchema])
+def get_streak_achievements():
+    return streak_achievements
+
+# -------------------------
+# Get all total task achievements
+# -------------------------
+@app.get("/total_task_achievements", response_model=list[TotalTasksAchievementSchema])
+def get_total_task_achievements():
+    return total_task_achievements
