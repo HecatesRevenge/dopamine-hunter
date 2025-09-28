@@ -19,6 +19,19 @@ import {
 import { cn } from "@/lib/utils";
 import { useNavigate } from "react-router-dom";
 
+// Import achievement icons
+import starIcon from "@/assets/icons/star.png";
+import trophyIcon from "@/assets/icons/trophy.png";
+import targetIcon from "@/assets/icons/target.png";
+import lightningIcon from "@/assets/icons/lightning.png";
+import selfCareIcon from "@/assets/icons/self-care.png";
+import cleaningIcon from "@/assets/icons/cleaning.png";
+import studyingIcon from "@/assets/icons/studying.png";
+import exerciseIcon from "@/assets/icons/exercise.png";
+import morningRoutineIcon from "@/assets/icons/morningroutine.png";
+import meditateIcon from "@/assets/icons/meditate.png";
+import focustimeIcon from "@/assets/icons/focustime.png";
+
 interface TaskNode {
   id: string;
   title: string;
@@ -34,57 +47,57 @@ interface TaskNode {
 const taskNodes: TaskNode[] = [
   // SELF CARE TREE (Left side - 20-30% x range)
   // Base
-  { id: "self-care-base", title: "Self Care Basics", description: "Master daily self-care routines and build healthy habits", customIcon: "/placeholders/Fp_basics.webp", status: "completed", position: { x: 20, y: 85 } },
+  { id: "self-care-base", title: "Self Care Basics", description: "Master daily self-care routines and build healthy habits", customIcon: selfCareIcon, status: "completed", position: { x: 20, y: 85 } },
   // Tier 1
-  { id: "morning-routine", title: "Morning Routine", description: "Establish a consistent morning routine to start your day right", customIcon: "/placeholders/achievements/bronze_32x32.png", status: "completed", position: { x: 15, y: 70 }, prerequisites: ["self-care-base"] },
-  { id: "self-hygiene", title: "Hygiene Habits", description: "Build consistent personal hygiene routines", customIcon: "/placeholders/achievements/silver_1_32x32.png", status: "available", position: { x: 25, y: 70 }, prerequisites: ["self-care-base"] },
+  { id: "morning-routine", title: "Morning Routine", description: "Establish a consistent morning routine to start your day right", customIcon: morningRoutineIcon, status: "completed", position: { x: 15, y: 70 }, prerequisites: ["self-care-base"] },
+  { id: "self-hygiene", title: "Hygiene Habits", description: "Build consistent personal hygiene routines", customIcon: selfCareIcon, status: "available", position: { x: 25, y: 70 }, prerequisites: ["self-care-base"] },
   // Tier 2
-  { id: "exercise", title: "Exercise Routine", description: "Develop a sustainable fitness habit", customIcon: "/placeholders/achievements/gold_1_32x32.png", status: "locked", position: { x: 12, y: 55 }, prerequisites: ["morning-routine"] },
-  { id: "nutrition", title: "Healthy Eating", description: "Create balanced meal planning and eating habits", customIcon: "/placeholders/achievements/bronze_32x32.png", status: "locked", position: { x: 20, y: 55 }, prerequisites: ["morning-routine", "self-hygiene"] },
-  { id: "sleep-hygiene", title: "Sleep Mastery", description: "Optimize sleep schedule and bedtime routines", customIcon: "/placeholders/achievements/silver_1_32x32.png", status: "locked", position: { x: 28, y: 55 }, prerequisites: ["self-hygiene"] },
+  { id: "exercise", title: "Exercise Routine", description: "Develop a sustainable fitness habit", customIcon: exerciseIcon, status: "locked", position: { x: 12, y: 55 }, prerequisites: ["morning-routine"] },
+  { id: "nutrition", title: "Healthy Eating", description: "Create balanced meal planning and eating habits", customIcon: targetIcon, status: "locked", position: { x: 20, y: 55 }, prerequisites: ["morning-routine", "self-hygiene"] },
+  { id: "sleep-hygiene", title: "Sleep Mastery", description: "Optimize sleep schedule and bedtime routines", customIcon: starIcon, status: "locked", position: { x: 28, y: 55 }, prerequisites: ["self-hygiene"] },
   // Tier 3
-  { id: "mindfulness", title: "Mindfulness", description: "Develop meditation and stress management skills", customIcon: "/placeholders/achievements/gold_1_32x32.png", status: "locked", position: { x: 20, y: 40 }, prerequisites: ["exercise", "nutrition", "sleep-hygiene"] },
+  { id: "mindfulness", title: "Mindfulness", description: "Develop meditation and stress management skills", customIcon: meditateIcon, status: "locked", position: { x: 20, y: 40 }, prerequisites: ["exercise", "nutrition", "sleep-hygiene"] },
   // Tier 4
-  { id: "wellness-master", title: "Wellness Master", description: "Achieve holistic health and well-being", customIcon: "/placeholders/achievements/silver_1_32x32.png", status: "locked", position: { x: 20, y: 25 }, prerequisites: ["mindfulness"] },
+  { id: "wellness-master", title: "Wellness Master", description: "Achieve holistic health and well-being", customIcon: trophyIcon, status: "locked", position: { x: 20, y: 25 }, prerequisites: ["mindfulness"] },
   // Tier 5
-  { id: "life-coach", title: "Life Coach", description: "Help others develop their wellness journey", customIcon: "/placeholders/achievements/gold_1_32x32.png", status: "locked", position: { x: 15, y: 10 }, prerequisites: ["wellness-master"] },
-  { id: "wellness-influencer", title: "Wellness Influencer", description: "Inspire communities to live healthier lives", customIcon: "/placeholders/achievements/bronze_32x32.png", status: "locked", position: { x: 25, y: 10 }, prerequisites: ["wellness-master"] },
+  { id: "life-coach", title: "Life Coach", description: "Help others develop their wellness journey", customIcon: starIcon, status: "locked", position: { x: 15, y: 10 }, prerequisites: ["wellness-master"] },
+  { id: "wellness-influencer", title: "Wellness Influencer", description: "Inspire communities to live healthier lives", customIcon: lightningIcon, status: "locked", position: { x: 25, y: 10 }, prerequisites: ["wellness-master"] },
 
   // CHORES TREE (Center - 45-55% x range)
   // Base
-  { id: "chores-base", title: "Basic Chores", description: "Master fundamental household maintenance tasks", customIcon: "/placeholders/achievements/bronze_32x32.png", status: "available", position: { x: 50, y: 85 } },
+  { id: "chores-base", title: "Basic Chores", description: "Master fundamental household maintenance tasks", customIcon: cleaningIcon, status: "available", position: { x: 50, y: 85 } },
   // Tier 1
-  { id: "cleaning-basics", title: "Cleaning Basics", description: "Learn efficient cleaning techniques and routines", customIcon: "/placeholders/achievements/silver_1_32x32.png", status: "locked", position: { x: 45, y: 70 }, prerequisites: ["chores-base"] },
-  { id: "laundry", title: "Laundry Management", description: "Organize washing, drying, and clothing care", customIcon: "/placeholders/achievements/gold_1_32x32.png", status: "locked", position: { x: 55, y: 70 }, prerequisites: ["chores-base"] },
+  { id: "cleaning-basics", title: "Cleaning Basics", description: "Learn efficient cleaning techniques and routines", customIcon: cleaningIcon, status: "locked", position: { x: 45, y: 70 }, prerequisites: ["chores-base"] },
+  { id: "laundry", title: "Laundry Management", description: "Organize washing, drying, and clothing care", customIcon: targetIcon, status: "locked", position: { x: 55, y: 70 }, prerequisites: ["chores-base"] },
   // Tier 2
-  { id: "organization", title: "Home Organization", description: "Create and maintain organized living spaces", customIcon: "/placeholders/achievements/bronze_32x32.png", status: "locked", position: { x: 42, y: 55 }, prerequisites: ["cleaning-basics"] },
-  { id: "maintenance", title: "Home Maintenance", description: "Handle basic repairs and upkeep tasks", customIcon: "/placeholders/achievements/silver_1_32x32.png", status: "locked", position: { x: 50, y: 55 }, prerequisites: ["cleaning-basics", "laundry"] },
-  { id: "cooking", title: "Cooking Skills", description: "Develop meal preparation and kitchen management", customIcon: "/placeholders/achievements/gold_1_32x32.png", status: "locked", position: { x: 58, y: 55 }, prerequisites: ["laundry"] },
+  { id: "organization", title: "Home Organization", description: "Create and maintain organized living spaces", customIcon: starIcon, status: "locked", position: { x: 42, y: 55 }, prerequisites: ["cleaning-basics"] },
+  { id: "maintenance", title: "Home Maintenance", description: "Handle basic repairs and upkeep tasks", customIcon: targetIcon, status: "locked", position: { x: 50, y: 55 }, prerequisites: ["cleaning-basics", "laundry"] },
+  { id: "cooking", title: "Cooking Skills", description: "Develop meal preparation and kitchen management", customIcon: trophyIcon, status: "locked", position: { x: 58, y: 55 }, prerequisites: ["laundry"] },
   // Tier 3
-  { id: "home-systems", title: "Home Systems", description: "Create efficient household management systems", customIcon: "/placeholders/achievements/bronze_32x32.png", status: "locked", position: { x: 50, y: 40 }, prerequisites: ["organization", "maintenance", "cooking"] },
+  { id: "home-systems", title: "Home Systems", description: "Create efficient household management systems", customIcon: lightningIcon, status: "locked", position: { x: 50, y: 40 }, prerequisites: ["organization", "maintenance", "cooking"] },
   // Tier 4
-  { id: "home-master", title: "Home Master", description: "Achieve complete household management mastery", customIcon: "/placeholders/achievements/silver_1_32x32.png", status: "locked", position: { x: 50, y: 25 }, prerequisites: ["home-systems"] },
+  { id: "home-master", title: "Home Master", description: "Achieve complete household management mastery", customIcon: trophyIcon, status: "locked", position: { x: 50, y: 25 }, prerequisites: ["home-systems"] },
   // Tier 5
-  { id: "home-designer", title: "Home Designer", description: "Create beautiful and functional living spaces", customIcon: "/placeholders/achievements/gold_1_32x32.png", status: "locked", position: { x: 45, y: 10 }, prerequisites: ["home-master"] },
-  { id: "household-guru", title: "Household Guru", description: "Become an expert who can optimize any living space", customIcon: "/placeholders/achievements/bronze_32x32.png", status: "locked", position: { x: 55, y: 10 }, prerequisites: ["home-master"] },
+  { id: "home-designer", title: "Home Designer", description: "Create beautiful and functional living spaces", customIcon: starIcon, status: "locked", position: { x: 45, y: 10 }, prerequisites: ["home-master"] },
+  { id: "household-guru", title: "Household Guru", description: "Become an expert who can optimize any living space", customIcon: trophyIcon, status: "locked", position: { x: 55, y: 10 }, prerequisites: ["home-master"] },
 
   // STUDYING TREE (Right side - 70-80% x range)
   // Base
-  { id: "study-base", title: "Study Basics", description: "Learn fundamental study techniques and habits", customIcon: "/placeholders/achievements/bronze_32x32.png", status: "locked", position: { x: 80, y: 85 } },
+  { id: "study-base", title: "Study Basics", description: "Learn fundamental study techniques and habits", customIcon: studyingIcon, status: "locked", position: { x: 80, y: 85 } },
   // Tier 1
-  { id: "note-taking", title: "Note Taking", description: "Master effective note-taking strategies", customIcon: "/placeholders/achievements/silver_1_32x32.png", status: "locked", position: { x: 75, y: 70 }, prerequisites: ["study-base"] },
-  { id: "focus-skills", title: "Focus Training", description: "Develop concentration and attention skills", customIcon: "/placeholders/achievements/gold_1_32x32.png", status: "locked", position: { x: 85, y: 70 }, prerequisites: ["study-base"] },
+  { id: "note-taking", title: "Note Taking", description: "Master effective note-taking strategies", customIcon: studyingIcon, status: "locked", position: { x: 75, y: 70 }, prerequisites: ["study-base"] },
+  { id: "focus-skills", title: "Focus Training", description: "Develop concentration and attention skills", customIcon: focustimeIcon, status: "locked", position: { x: 85, y: 70 }, prerequisites: ["study-base"] },
   // Tier 2
-  { id: "time-management", title: "Time Management", description: "Learn to organize study time effectively", customIcon: "/placeholders/achievements/bronze_32x32.png", status: "locked", position: { x: 72, y: 55 }, prerequisites: ["note-taking"] },
-  { id: "research-skills", title: "Research Skills", description: "Develop information gathering and analysis abilities", customIcon: "/placeholders/achievements/silver_1_32x32.png", status: "locked", position: { x: 80, y: 55 }, prerequisites: ["note-taking", "focus-skills"] },
-  { id: "memory-techniques", title: "Memory Techniques", description: "Master memorization and retention strategies", customIcon: "/placeholders/achievements/gold_1_32x32.png", status: "locked", position: { x: 88, y: 55 }, prerequisites: ["focus-skills"] },
+  { id: "time-management", title: "Time Management", description: "Learn to organize study time effectively", customIcon: targetIcon, status: "locked", position: { x: 72, y: 55 }, prerequisites: ["note-taking"] },
+  { id: "research-skills", title: "Research Skills", description: "Develop information gathering and analysis abilities", customIcon: lightningIcon, status: "locked", position: { x: 80, y: 55 }, prerequisites: ["note-taking", "focus-skills"] },
+  { id: "memory-techniques", title: "Memory Techniques", description: "Master memorization and retention strategies", customIcon: starIcon, status: "locked", position: { x: 88, y: 55 }, prerequisites: ["focus-skills"] },
   // Tier 3
-  { id: "advanced-study", title: "Advanced Study", description: "Integrate all study skills for maximum learning", customIcon: "/placeholders/achievements/bronze_32x32.png", status: "locked", position: { x: 80, y: 40 }, prerequisites: ["time-management", "research-skills", "memory-techniques"] },
+  { id: "advanced-study", title: "Advanced Study", description: "Integrate all study skills for maximum learning", customIcon: trophyIcon, status: "locked", position: { x: 80, y: 40 }, prerequisites: ["time-management", "research-skills", "memory-techniques"] },
   // Tier 4
-  { id: "study-master", title: "Study Master", description: "Achieve mastery in learning and academic success", customIcon: "/placeholders/achievements/silver_1_32x32.png", status: "locked", position: { x: 80, y: 25 }, prerequisites: ["advanced-study"] },
+  { id: "study-master", title: "Study Master", description: "Achieve mastery in learning and academic success", customIcon: trophyIcon, status: "locked", position: { x: 80, y: 25 }, prerequisites: ["advanced-study"] },
   // Tier 5
-  { id: "knowledge-sage", title: "Knowledge Sage", description: "Become a master learner who can tackle any subject", customIcon: "/placeholders/achievements/gold_1_32x32.png", status: "locked", position: { x: 75, y: 10 }, prerequisites: ["study-master"] },
-  { id: "study-mentor", title: "Study Mentor", description: "Guide others in their learning journey", customIcon: "/placeholders/achievements/bronze_32x32.png", status: "locked", position: { x: 85, y: 10 }, prerequisites: ["study-master"] }
+  { id: "knowledge-sage", title: "Knowledge Sage", description: "Become a master learner who can tackle any subject", customIcon: starIcon, status: "locked", position: { x: 75, y: 10 }, prerequisites: ["study-master"] },
+  { id: "study-mentor", title: "Study Mentor", description: "Guide others in their learning journey", customIcon: lightningIcon, status: "locked", position: { x: 85, y: 10 }, prerequisites: ["study-master"] }
 ];
 
 const TaskTree: React.FC = () => {

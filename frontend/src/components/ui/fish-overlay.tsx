@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { Heart, Star, Target, Trophy, Zap } from 'lucide-react';
+import { Heart, Star, Target, Trophy, Zap, X } from 'lucide-react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 interface Fish {
@@ -510,7 +510,20 @@ export function FishOverlay({ isOpen, onClose }: FishOverlayProps) {
                 </div>
             ))}
 
-            {/* Dummy Buttons at Bottom */}
+            {/* Close Button */}
+            <div className="absolute top-8 right-8 pointer-events-auto">
+                <Button
+                    variant="outline"
+                    size="lg"
+                    className="bg-background/80 backdrop-blur-md border-2 hover:scale-105 transition-all duration-200"
+                    onClick={onClose}
+                >
+                    <X className="w-5 h-5 mr-2" />
+                    Close
+                </Button>
+            </div>
+
+            {/* Feed Button at Bottom */}
             <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex gap-4 pointer-events-auto">
                 <Button
                     variant="outline"

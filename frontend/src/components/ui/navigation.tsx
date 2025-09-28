@@ -107,12 +107,12 @@ export function Navigation({ currentPage = "home", onNavigate, onGoldfishClick }
     >
       <div className="flex items-center justify-between">
         {/* Logo, Menu & Title */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-4">
           <img
             src={goldfishLogo}
             alt="Goldfish Logo"
             className="w-16 h-16 animate-float cursor-pointer transition-transform hover:scale-110"
-            onClick= { handleGoldfishClick }
+            onClick={handleGoldfishClick}
           />
 
           <QuickAccessDrawer />
@@ -162,12 +162,12 @@ export function Navigation({ currentPage = "home", onNavigate, onGoldfishClick }
           </Sheet>
 
           <h1
-            className="text-2xl font-poppins font-bold bg-ocean bg-clip-text text-transparent cursor-pointer hover:scale-105 transition-transform px-4"
+            className="text-3xl font-poppins font-bold cursor-pointer hover:scale-105 transition-transform px-4"
+            style={{ color: '#6AA0F3' }}
             onClick={() => handleNavigate("home")}
           >
-            TaskQuest
+            Fishy Focus
           </h1>
-          <QuickAccessDrawer />
         </div>
 
         {/* Desktop Hamburger Menu & Profile */}

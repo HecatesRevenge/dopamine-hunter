@@ -13,23 +13,36 @@ import { useState } from "react";
 
 const queryClient = new QueryClient();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/task-tree" element={<TaskTree />} />
-          <Route path="/achievements" element={<Achievements />} />
-          <Route path="/minigame" element={<FishMinigame />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+const App = () => {
+  const [isFishOverlayOpen, setIsFishOverlayOpen] = useState(false);
+
+  const handleGoldfishClick = () => {
+    setIsFishOverlayOpen(true);
+  };
+
+  const handleCloseFishOverlay = () => {
+    setIsFishOverlayOpen(false);
+  };
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Home onGoldfishClick={handleGoldfishClick} />} />
+            <Route path="/task-tree" element={<TaskTree />} />
+            <Route path="/achievements" element={<Achievements />} />
+            <Route path="/minigame" element={<FishMinigame />} />
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+          <FishOverlay isOpen={isFishOverlayOpen} onClose={handleCloseFishOverlay} />
+        </BrowserRouter>
+      </TooltipProvider>
+    </QueryClientProvider>
+  );
+};
 
 export default App;
