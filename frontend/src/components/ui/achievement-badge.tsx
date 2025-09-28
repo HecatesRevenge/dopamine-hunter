@@ -113,7 +113,7 @@ export function AchievementBadge({
       </div>
 
       {/* Tooltip */}
-      <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none z-10">
+      <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none z-50">
         <div className="bg-card-overlay backdrop-blur-md rounded-lg p-3 shadow-lg border border-white/20 max-w-xs">
           <h4 className="font-semibold text-sm mb-1">{title}</h4>
           {description && (
@@ -126,7 +126,7 @@ export function AchievementBadge({
           )}
         </div>
         {/* Tooltip Arrow */}
-        <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-card-overlay"></div>
+        <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-b-4 border-transparent border-b-card-overlay"></div>
       </div>
 
       {/* Unlock Animation */}

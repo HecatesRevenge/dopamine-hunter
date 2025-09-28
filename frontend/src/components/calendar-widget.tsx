@@ -127,8 +127,8 @@ export function CalendarWidget({ className }: CalendarWidgetProps) {
     return hours;
   };
 
-  const getEightHourIncrements = () => {
-    return ['00:00', '08:00', '16:00']; // Morning, Afternoon, Evening
+  const getFourHourIncrements = () => {
+    return ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00']; // 6 time slots of 4 hours each
   };
 
   const isToday = (date: Date) => {
@@ -199,7 +199,7 @@ export function CalendarWidget({ className }: CalendarWidgetProps) {
 
   const renderWeeklyGrid = () => {
     const weekDays = getWeekDays();
-    const timeSlots = expandedDay ? getHours() : getEightHourIncrements();
+    const timeSlots = expandedDay ? getHours() : getFourHourIncrements();
     const isExpanded = !!expandedDay;
 
     return (
@@ -236,12 +236,14 @@ export function CalendarWidget({ className }: CalendarWidgetProps) {
 
         {/* Time slots and tasks */}
         {timeSlots.map(timeSlot => {
-          const isEightHourSlot = !isExpanded;
+          const isFourHourSlot = !isExpanded;
           const startHour = parseInt(timeSlot.split(':')[0]);
-          const endHour = isEightHourSlot ? startHour + 8 : startHour + 1;
-          const timeLabel = isEightHourSlot ? 
-            `${timeSlot} - ${(startHour + 8).toString().padStart(2, '0')}:00` : 
-            timeSlot;
+          const endHour = isFourHourSlot ? startHour + 4 : startHour + 1;
+
+          // Format time labels in AM/PM
+          const timeLabel = isFourHourSlot ?
+            `${formatTimeForDisplay(timeSlot)} - ${formatTimeForDisplay(`${(startHour + 4).toString().padStart(2, '0')}:00`)}` :
+            formatTimeForDisplay(timeSlot);
 
           return (
             <React.Fragment key={timeSlot}>
@@ -252,7 +254,7 @@ export function CalendarWidget({ className }: CalendarWidgetProps) {
               
               {/* Time slots for each day */}
               {(isExpanded ? [expandedDay!] : weekDays).map(day => {
-                const dayTasks = isEightHourSlot ? 
+                const dayTasks = isFourHourSlot ?
                   getTasksForTimeRange(day, startHour, endHour) :
                   getTasksForDateTime(day, timeSlot);
                 
@@ -261,12 +263,12 @@ export function CalendarWidget({ className }: CalendarWidgetProps) {
                     key={`${day.toISOString()}-${timeSlot}`}
                     className={cn(
                       "border border-border/20 rounded-sm relative group hover:bg-muted/30 transition-colors",
-                      isEightHourSlot ? "h-16" : "h-12",
+                      isFourHourSlot ? "h-20" : "h-12",
                       isToday(day) && "bg-ocean/5"
                     )}
                   >
-                    {isEightHourSlot ? (
-                      // 8-hour view: show task count or summary
+                    {isFourHourSlot ? (
+                      // 4-hour view: show task count or summary
                       dayTasks.length > 0 && (
                         <div className="absolute inset-1 bg-primary/20 border border-primary/40 rounded-sm p-1 flex flex-col justify-center">
                           <div className="text-xs text-primary font-medium text-center">
@@ -321,7 +323,7 @@ export function CalendarWidget({ className }: CalendarWidgetProps) {
   currentWeekEnd.setDate(currentWeekStart.getDate() + 6);
 
   return (
-    <Card className={cn("glass-card p-6", className)}>
+    <Card className={cn("glass-card p-6 h-[738px] flex flex-col", className)}>
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-2">
           <Calendar className="w-5 h-5 text-primary" />
@@ -454,7 +456,7 @@ export function CalendarWidget({ className }: CalendarWidgetProps) {
       </div>
 
       {/* Weekly Calendar Grid with Hours */}
-      <div className="max-h-96 overflow-y-auto border rounded-lg">
+      <div className="flex-1 overflow-y-auto border rounded-lg min-h-0">
         {renderWeeklyGrid()}
       </div>
 

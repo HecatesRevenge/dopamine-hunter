@@ -22,14 +22,8 @@ import { AchievementBadge } from "@/components/ui/achievement-badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import {
-  Flame,
-  Trophy,
   Target,
-  Clock,
-  TrendingUp,
-  Star,
-  ChevronRight,
-  Zap
+  ChevronRight
 } from "lucide-react";
 
 const Home = () => {
@@ -122,7 +116,7 @@ const Home = () => {
 
   const inProgressTasks = [
     { title: "Self Care", progress: 75, color: "success" as const },
-    { title: "Study Session", progress: 45, color: "primary" as const },
+    { title: "Studying", progress: 45, color: "primary" as const },
     { title: "Cleaning Path", progress: 90, color: "accent" as const },
     {
       title: "Total Streak",
@@ -137,10 +131,24 @@ const Home = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <Navigation currentPage={currentPage} onNavigate={setCurrentPage} />
+    <div
+      className="min-h-screen text-foreground relative flex flex-col"
+      style={{
+        backgroundImage: 'url(/placeholders/seabackground.png)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        backgroundAttachment: 'fixed'
+      }}
+    >
+      {/* Dark theme overlay for proper brightness */}
+      <div className="absolute inset-0 bg-black/57 dark:bg-black/67"></div>
 
-      <main className="pt-24 px-4 pb-8">
+      {/* Content wrapper */}
+      <div className="relative z-10 flex flex-col min-h-screen">
+        <Navigation currentPage={currentPage} onNavigate={setCurrentPage} />
+
+        <main className="pt-24 px-4 flex-1">
         <div className="max-w-7xl mx-auto">
           {/* Welcome Section - keeping padding structure */}
           <div className="mb-8"></div>
@@ -173,14 +181,137 @@ const Home = () => {
             </div>
           </Card>
 
-          {/* Calendar Widget */}
-          <div className="mb-8">
-            <CalendarWidget />
+          {/* Calendar Widget and Achievements */}
+          <div className="mb-8 flex gap-6 items-start">
+            {/* Calendar - 85% width */}
+            <div className="w-[85%]">
+              <CalendarWidget />
+            </div>
+
+            {/* Achievements Sidebar */}
+            <div className="flex-1">
+              <Card className="glass-card p-4 h-[738px] flex flex-col">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="font-semibold text-sm">Achievements</h3>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setCurrentPage("achievements")}
+                    className="text-xs h-6 px-2"
+                  >
+                    View All
+                    <ChevronRight className="w-3 h-3 ml-1" />
+                  </Button>
+                </div>
+
+                {/* Scrollable Achievement Grid */}
+                <div className="flex-1 overflow-y-auto">
+                  <div className="grid grid-cols-2 gap-3">
+                    {/* First Row */}
+                    <AchievementBadge
+                      icon="first-task"
+                      title="First Steps"
+                      description="Complete your first task"
+                      isUnlocked={true}
+                      size="sm"
+                    />
+                    <AchievementBadge
+                      icon="silver"
+                      title="Focus Starter"
+                      description="Complete 5 focus sessions"
+                      isUnlocked={true}
+                      size="sm"
+                    />
+
+                    {/* Second Row */}
+                    <AchievementBadge
+                      icon="gold"
+                      title="Morning Person"
+                      description="Complete morning routine 5 times"
+                      isUnlocked={false}
+                      size="sm"
+                    />
+                    <AchievementBadge
+                      icon="trophy"
+                      title="Habit Builder"
+                      description="Maintain 7-day streak"
+                      isUnlocked={false}
+                      size="sm"
+                    />
+
+                    {/* Third Row */}
+                    <AchievementBadge
+                      icon="target"
+                      title="Task Master"
+                      description="Complete 50 tasks"
+                      isUnlocked={false}
+                      size="sm"
+                    />
+                    <AchievementBadge
+                      icon="star"
+                      title="Consistency King"
+                      description="Complete daily goals 14 days"
+                      isUnlocked={false}
+                      size="sm"
+                    />
+
+                    {/* Fourth Row */}
+                    <AchievementBadge
+                      icon="award"
+                      title="Time Manager"
+                      description="Use calendar 30 days"
+                      isUnlocked={false}
+                      size="sm"
+                    />
+                    <AchievementBadge
+                      icon="zap"
+                      title="Energy Boost"
+                      description="Complete 3 tasks in one day"
+                      isUnlocked={false}
+                      size="sm"
+                    />
+
+                    {/* Fifth Row */}
+                    <AchievementBadge
+                      icon="first-task"
+                      title="Self Care Hero"
+                      description="Complete self care 10 times"
+                      isUnlocked={false}
+                      size="sm"
+                    />
+                    <AchievementBadge
+                      icon="silver"
+                      title="Study Champion"
+                      description="Complete 25 study sessions"
+                      isUnlocked={false}
+                      size="sm"
+                    />
+
+                    {/* Sixth Row */}
+                    <AchievementBadge
+                      icon="gold"
+                      title="Organization Pro"
+                      description="Use calendar every day for 2 weeks"
+                      isUnlocked={false}
+                      size="sm"
+                    />
+                    <AchievementBadge
+                      icon="trophy"
+                      title="Ultimate Achiever"
+                      description="Unlock 10 other achievements"
+                      isUnlocked={false}
+                      size="sm"
+                    />
+                  </div>
+                </div>
+              </Card>
+            </div>
           </div>
 
         </div>
         <Footer onNavigate={setCurrentPage} />
       </main>
+      </div>
     </div>
   );
 };
