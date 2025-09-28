@@ -1,4 +1,5 @@
-from pydantic import BaseModel
+from __future__ import annotations
+from pydantic import BaseModel, Field
 from datetime import datetime
 from enum import Enum
 
@@ -19,6 +20,16 @@ class User(BaseModel):
     username: str
     profile_pic: str | None = None
     created_at: datetime | None = None
+    tasks: list["Task"] = Field(default_factory=list)
+    achievements: list["Achievement"] = Field(default_factory=list)
+    login_streak: int = 0
+    # last time the user successfully logged in
+    last_login: datetime | None = None
+    # total number of page visits recorded for streaks
+    total_visits: int = 0
+    # best (highest) daily streak achieved
+    best_streak: int = 0
+
 
 class Task(BaseModel):
     id: int | None = None
