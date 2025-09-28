@@ -8,6 +8,8 @@ import TaskTree from "./pages/TaskTree";
 import Achievements from "./pages/Achievements";
 import FishMinigame from "./pages/FishMinigame";
 import NotFound from "./pages/NotFound";
+import { FishOverlay } from "@/components/ui/fish-overlay";
+import { useState } from "react";
 
 const queryClient = new QueryClient();
 
