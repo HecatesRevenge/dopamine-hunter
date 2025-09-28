@@ -7,6 +7,7 @@ interface ProgressRingProps {
   showValue?: boolean;
   className?: string;
   label?: string;
+  category?: string;
 }
 
 const sizeClasses = {
@@ -28,17 +29,29 @@ const colorClasses = {
   streak: "stroke-streak",
 };
 
-export function ProgressRing({ 
-  progress, 
-  size = "md", 
+export function ProgressRing({
+  progress,
+  size = "md",
   color = "primary",
   showValue = true,
   className,
-  label 
+  label,
+  category
 }: ProgressRingProps) {
   const normalizedRadius = 45 - strokeWidths[size] * 2;
   const circumference = normalizedRadius * 2 * Math.PI;
   const strokeDasharray = `${(progress / 100) * circumference} ${circumference}`;
+
+  // Generate image path based on category
+  const getImagePath = () => {
+    if (!category) {
+      return "/placeholders/progress-placeholder-64x64.png";
+    }
+
+    // Convert category to lowercase and replace spaces with hyphens
+    const categorySlug = category.toLowerCase().replace(/\s+/g, '-');
+    return `/placeholders/categories/${categorySlug}-64x64.png`;
+  };
 
   return (
     <div className={cn("progress-ring flex flex-col items-center gap-2", className)}>
@@ -75,12 +88,25 @@ export function ProgressRing({
           />
         </svg>
         
-        {/* Progress value */}
+        {/* Pixel Art Character */}
+        <div className="absolute inset-0 flex items-center justify-center">
+          <img
+            src={getImagePath()}
+            alt={category ? `${category} character` : "Character placeholder"}
+            className={cn(
+              "pixel-art",
+              size === "sm" ? "w-8 h-8" : size === "md" ? "w-12 h-12" : "w-16 h-16"
+            )}
+            style={{ imageRendering: 'pixelated' }}
+          />
+        </div>
+        
+        {/* Progress value overlay */}
         {showValue && (
           <div className="absolute inset-0 flex items-center justify-center">
             <span className={cn(
-              "font-bold",
-              size === "sm" ? "text-xs" : size === "md" ? "text-sm" : "text-lg"
+              "font-bold bg-card-overlay/80 rounded px-1 text-xs backdrop-blur-sm",
+              "absolute -bottom-6"
             )}>
               {Math.round(progress)}%
             </span>

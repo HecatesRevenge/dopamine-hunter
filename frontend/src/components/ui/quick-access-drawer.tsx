@@ -59,26 +59,29 @@ export function QuickAccessDrawer({ className }: QuickAccessDrawerProps) {
             <div className="space-y-3">
               <StatsCard
                 title="Current Streak"
-                value="12"
-                subtitle="days in a row"
-                icon={<Flame className="w-5 h-5" />}
+                value="7 days"
+                subtitle="Keep it up!"
                 variant="streak"
+                icon={<Flame className="w-6 h-6" />}
+                backgroundImage="/placeholders/banners/current-streak-banner-400x80.png"
               />
-              
+
               <StatsCard
-                title="Tasks Completed"
-                value="47"
-                subtitle="this week"
-                icon={<Trophy className="w-5 h-5" />}
+                title="Best Streak"
+                value="14 days"
+                subtitle="Personal record"
                 variant="achievement"
+                icon={<Trophy className="w-6 h-6" />}
+                backgroundImage="/placeholders/banners/best-streak-banner-400x80.png"
               />
-              
+
               <StatsCard
                 title="Focus Time"
                 value="4.5h"
                 subtitle="today"
                 icon={<Clock className="w-5 h-5" />}
                 variant="energy"
+                backgroundImage="/placeholders/banners/focus-time-banner-400x80.png"
               />
             </div>
           </div>

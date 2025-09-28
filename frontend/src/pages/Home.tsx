@@ -31,7 +31,7 @@ const Home = () => {
   const inProgressTasks = [
     { title: "Morning Routine", progress: 75, color: "success" as const },
     { title: "Study Session", progress: 45, color: "primary" as const },
-    { title: "Exercise", progress: 90, color: "accent" as const },
+    { title: "Cleaning Tasks", progress: 90, color: "accent" as const },
     { title: "Meditation", progress: 30, color: "streak" as const },
   ];
 
@@ -66,6 +66,7 @@ const Home = () => {
                   progress={task.progress}
                   color={task.color}
                   label={task.title}
+                  category={task.title}
                   size="md"
                   className="hover:scale-105 transition-transform cursor-pointer"
                 />
