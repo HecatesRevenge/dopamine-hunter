@@ -5,13 +5,18 @@ import { FocusTimer } from "@/components/ui/focus-timer";
 import { StatsCard } from "@/components/ui/stats-card";
 import { AchievementBadge } from "@/components/ui/achievement-badge";
 import { Card } from "@/components/ui/card";
-import { 
-  ChevronRight, 
-  Flame, 
-  Trophy, 
-  Clock, 
+import {
+  ChevronRight,
+  Flame,
+  Trophy,
+  Clock,
   Star
 } from "lucide-react";
+
+// Import banner images
+import currentStreakBanner from "@/assets/banners/current-streak-banner-400x80.png";
+import bestStreakBanner from "@/assets/banners/best-streak-banner-400x80.png";
+import focusTimeBanner from "@/assets/banners/focus-time-banner-400x80.png";
 
 interface QuickAccessDrawerProps {
   className?: string;
@@ -64,7 +69,7 @@ export function QuickAccessDrawer({ className }: QuickAccessDrawerProps) {
                 subtitle="Keep it up!"
                 variant="streak"
                 icon={<Flame className="w-6 h-6" />}
-                backgroundImage="/placeholders/banners/current-streak-banner-400x80.png"
+                backgroundImage={currentStreakBanner}
               />
 
               <StatsCard
@@ -73,7 +78,7 @@ export function QuickAccessDrawer({ className }: QuickAccessDrawerProps) {
                 subtitle="Personal record"
                 variant="achievement"
                 icon={<Trophy className="w-6 h-6" />}
-                backgroundImage="/placeholders/banners/best-streak-banner-400x80.png"
+                backgroundImage={bestStreakBanner}
               />
 
               <StatsCard
@@ -82,7 +87,7 @@ export function QuickAccessDrawer({ className }: QuickAccessDrawerProps) {
                 subtitle="today"
                 icon={<Clock className="w-5 h-5" />}
                 variant="energy"
-                backgroundImage="/placeholders/banners/focus-time-banner-400x80.png"
+                backgroundImage={focusTimeBanner}
               />
             </div>
           </div>

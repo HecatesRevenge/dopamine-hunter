@@ -21,12 +21,15 @@ import {
 import { cn } from "@/lib/utils";
 import { useNavigate } from "react-router-dom";
 
+// Import background image
+import seaBackground from "@/assets/images/seabackground.png";
+
 interface Achievement {
   id: string;
   title: string;
   description: string;
   category: "Self Care" | "Chores" | "Study" | "Social" | "General";
-  icon: "star" | "trophy" | "target" | "zap" | "award" | "first-task" | "silver" | "gold";
+  icon: "star" | "trophy" | "target" | "zap" | "award" | "first-task" | "silver" | "gold" | "bronze" | "cleaning" | "self-care" | "studying" | "total-streak" | "algae" | "crab" | "shark" | "seaturtle" | "snail2" | "angler" | "puffer";
   isUnlocked: boolean;
   unlockedDate?: string;
   rarity: "common" | "uncommon" | "rare" | "epic";
@@ -35,32 +38,32 @@ interface Achievement {
 
 const achievements: Achievement[] = [
   // Self Care Achievements
-  { id: "1", title: "First Steps", description: "Complete your first self-care task", category: "Self Care", icon: "first-task", isUnlocked: true, unlockedDate: "2024-09-20", rarity: "common" },
-  { id: "2", title: "Morning Person", description: "Complete morning routine 5 times", category: "Self Care", icon: "gold", isUnlocked: true, unlockedDate: "2024-09-22", rarity: "uncommon" },
+  { id: "1", title: "First Steps", description: "Complete your first self-care task", category: "Self Care", icon: "algae", isUnlocked: true, unlockedDate: "2024-09-20", rarity: "common" },
+  { id: "2", title: "Morning Person", description: "Complete morning routine 5 times", category: "Self Care", icon: "self-care", isUnlocked: true, unlockedDate: "2024-09-22", rarity: "uncommon" },
   { id: "3", title: "Self Care Hero", description: "Complete self care routine 10 times", category: "Self Care", icon: "star", isUnlocked: false, rarity: "rare", progress: { current: 7, total: 10 } },
   { id: "4", title: "Wellness Warrior", description: "Maintain perfect self-care for 30 days", category: "Self Care", icon: "trophy", isUnlocked: false, rarity: "epic", progress: { current: 12, total: 30 } },
-  { id: "5", title: "Mindful Master", description: "Complete 100 meditation sessions", category: "Self Care", icon: "silver", isUnlocked: false, rarity: "rare", progress: { current: 23, total: 100 } },
+  { id: "5", title: "Mindful Master", description: "Complete 100 meditation sessions", category: "Self Care", icon: "self-care", isUnlocked: false, rarity: "rare", progress: { current: 23, total: 100 } },
 
   // Chores Achievements
-  { id: "6", title: "Clean Slate", description: "Complete your first cleaning task", category: "Chores", icon: "target", isUnlocked: true, unlockedDate: "2024-09-18", rarity: "common" },
-  { id: "7", title: "Organization Pro", description: "Organize 5 different spaces", category: "Chores", icon: "award", isUnlocked: false, rarity: "uncommon", progress: { current: 3, total: 5 } },
-  { id: "8", title: "Household Hero", description: "Complete 50 household tasks", category: "Chores", icon: "trophy", isUnlocked: false, rarity: "rare", progress: { current: 31, total: 50 } },
-  { id: "9", title: "Master Chef", description: "Cook 25 meals from scratch", category: "Chores", icon: "gold", isUnlocked: false, rarity: "uncommon", progress: { current: 8, total: 25 } },
+  { id: "6", title: "Clean Slate", description: "Complete your first cleaning task", category: "Chores", icon: "cleaning", isUnlocked: true, unlockedDate: "2024-09-18", rarity: "common" },
+  { id: "7", title: "Organization Pro", description: "Organize 5 different spaces", category: "Chores", icon: "target", isUnlocked: false, rarity: "uncommon", progress: { current: 3, total: 5 } },
+  { id: "8", title: "Household Hero", description: "Complete 50 household tasks", category: "Chores", icon: "cleaning", isUnlocked: false, rarity: "rare", progress: { current: 31, total: 50 } },
+  { id: "9", title: "Master Chef", description: "Cook 25 meals from scratch", category: "Chores", icon: "angler", isUnlocked: false, rarity: "uncommon", progress: { current: 8, total: 25 } },
 
   // Study Achievements
-  { id: "10", title: "Study Starter", description: "Complete your first study session", category: "Study", icon: "first-task", isUnlocked: true, unlockedDate: "2024-09-25", rarity: "common" },
+  { id: "10", title: "Study Starter", description: "Complete your first study session", category: "Study", icon: "crab", isUnlocked: true, unlockedDate: "2024-09-25", rarity: "common" },
   { id: "11", title: "Focus Champion", description: "Complete 10 focus sessions", category: "Study", icon: "zap", isUnlocked: true, unlockedDate: "2024-09-27", rarity: "uncommon" },
-  { id: "12", title: "Study Champion", description: "Complete 25 study sessions", category: "Study", icon: "silver", isUnlocked: false, rarity: "rare", progress: { current: 18, total: 25 } },
+  { id: "12", title: "Study Champion", description: "Complete 25 study sessions", category: "Study", icon: "shark", isUnlocked: false, rarity: "rare", progress: { current: 18, total: 25 } },
   { id: "13", title: "Knowledge Seeker", description: "Study for 100 hours total", category: "Study", icon: "trophy", isUnlocked: false, rarity: "epic", progress: { current: 42, total: 100 } },
 
   // Social Achievements
-  { id: "14", title: "Social Butterfly", description: "Complete 5 social activities", category: "Social", icon: "star", isUnlocked: false, rarity: "uncommon", progress: { current: 2, total: 5 } },
-  { id: "15", title: "Team Player", description: "Collaborate on 10 group tasks", category: "Social", icon: "award", isUnlocked: false, rarity: "rare", progress: { current: 0, total: 10 } },
+  { id: "14", title: "Social Butterfly", description: "Complete 5 social activities", category: "Social", icon: "snail2", isUnlocked: false, rarity: "uncommon", progress: { current: 2, total: 5 } },
+  { id: "15", title: "Team Player", description: "Collaborate on 10 group tasks", category: "Social", icon: "seaturtle", isUnlocked: false, rarity: "rare", progress: { current: 0, total: 10 } },
 
   // General Achievements
-  { id: "16", title: "Streak Master", description: "Maintain a 7-day streak", category: "General", icon: "trophy", isUnlocked: true, unlockedDate: "2024-09-21", rarity: "uncommon" },
-  { id: "17", title: "Consistency King", description: "Complete daily goals for 14 days", category: "General", icon: "gold", isUnlocked: false, rarity: "rare", progress: { current: 9, total: 14 } },
-  { id: "18", title: "Time Manager", description: "Use calendar for 30 days", category: "General", icon: "silver", isUnlocked: false, rarity: "uncommon", progress: { current: 15, total: 30 } },
+  { id: "16", title: "Streak Master", description: "Maintain a 7-day streak", category: "General", icon: "puffer", isUnlocked: true, unlockedDate: "2024-09-21", rarity: "uncommon" },
+  { id: "17", title: "Consistency King", description: "Complete daily goals for 14 days", category: "General", icon: "total-streak", isUnlocked: false, rarity: "rare", progress: { current: 9, total: 14 } },
+  { id: "18", title: "Time Manager", description: "Use calendar for 30 days", category: "General", icon: "target", isUnlocked: false, rarity: "uncommon", progress: { current: 15, total: 30 } },
   { id: "19", title: "Ultimate Achiever", description: "Unlock 15 other achievements", category: "General", icon: "trophy", isUnlocked: false, rarity: "epic", progress: { current: 6, total: 15 } },
   { id: "20", title: "Energy Boost", description: "Complete 3 tasks in one day", category: "General", icon: "zap", isUnlocked: true, unlockedDate: "2024-09-19", rarity: "common" }
 ];
@@ -100,7 +103,7 @@ const Achievements: React.FC = () => {
     <div
       className="min-h-screen text-foreground relative flex flex-col"
       style={{
-        backgroundImage: 'url(/placeholders/seabackground.png)',
+        backgroundImage: `url(${seaBackground})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',

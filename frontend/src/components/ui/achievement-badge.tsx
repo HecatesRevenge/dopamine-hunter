@@ -2,8 +2,26 @@ import { cn } from "@/lib/utils";
 import { Star, Trophy, Target, Zap, Award } from "lucide-react";
 import { ReactNode } from "react";
 
+// Import all achievement icons
+import lightningIcon from "@/assets/icons/lightning.png";
+import starIcon from "@/assets/icons/star.png";
+import trophyIcon from "@/assets/icons/trophy.png";
+import targetIcon from "@/assets/icons/target.png";
+import focustimeIcon from "@/assets/icons/focustime.png";
+import cleaningIcon from "@/assets/icons/cleaning.png";
+import selfCareIcon from "@/assets/icons/self-care.png";
+import studyingIcon from "@/assets/icons/studying.png";
+import totalStreakIcon from "@/assets/icons/total-streak.png";
+import algaeIcon from "@/assets/icons/algae.png";
+import crabIcon from "@/assets/icons/crab.png";
+import sharkIcon from "@/assets/icons/shark.png";
+import seaturtleIcon from "@/assets/icons/seaturtle.png";
+import snail2Icon from "@/assets/icons/snail2.png";
+import anglerIcon from "@/assets/icons/angler.png";
+import pufferIcon from "@/assets/icons/puffer.png";
+
 interface AchievementBadgeProps {
-  icon?: "star" | "trophy" | "target" | "zap" | "award" | "first-task" | "silver" | "gold";
+  icon?: "star" | "trophy" | "target" | "zap" | "award" | "first-task" | "silver" | "gold" | "bronze" | "cleaning" | "self-care" | "studying" | "total-streak" | "algae" | "crab" | "shark" | "seaturtle" | "snail2" | "angler" | "puffer";
   title: string;
   description?: string;
   isUnlocked?: boolean;
@@ -21,11 +39,28 @@ const iconMap = {
   award: Award,
 };
 
-// Custom image icons
+// Custom image icons mapped to imported assets
 const customIconMap = {
-  "first-task": "/placeholders/achievements/bronze_32x32.png",
-  "gold": "/placeholders/achievements/gold_1_32x32.png",
-  "silver": "/placeholders/achievements/silver_1_32x32.png",
+  "first-task": lightningIcon,
+  "gold": trophyIcon,
+  "silver": starIcon,
+  "bronze": targetIcon,
+  "star": starIcon,
+  "trophy": trophyIcon,
+  "target": targetIcon,
+  "zap": lightningIcon,
+  "award": focustimeIcon,
+  "cleaning": cleaningIcon,
+  "self-care": selfCareIcon,
+  "studying": studyingIcon,
+  "total-streak": totalStreakIcon,
+  "algae": algaeIcon,
+  "crab": crabIcon,
+  "shark": sharkIcon,
+  "seaturtle": seaturtleIcon,
+  "snail2": snail2Icon,
+  "angler": anglerIcon,
+  "puffer": pufferIcon,
 };
 
 const sizeClasses = {
@@ -56,8 +91,8 @@ export function AchievementBadge({
   onClick,
   children
 }: AchievementBadgeProps) {
-  const IconComponent = iconMap[icon as keyof typeof iconMap];
   const customIconPath = customIconMap[icon as keyof typeof customIconMap];
+  const IconComponent = iconMap[icon as keyof typeof iconMap];
   const isCustomIcon = !!customIconPath;
 
   return (
@@ -95,7 +130,7 @@ export function AchievementBadge({
             className={cn(
               imageSizeClasses[size],
               "relative z-0",
-              isUnlocked ? "opacity-100" : "opacity-100"
+              isUnlocked ? "opacity-100" : "opacity-60 grayscale"
             )}
             style={{ imageRendering: 'pixelated' }}
           />
@@ -105,7 +140,7 @@ export function AchievementBadge({
               className={cn(
                 iconSizeClasses[size],
                 "relative z-0",
-                isUnlocked ? "text-white" : "text-white"
+                isUnlocked ? "text-white" : "text-white opacity-60"
               )}
             />
           )

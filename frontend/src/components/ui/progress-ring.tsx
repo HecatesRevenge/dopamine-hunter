@@ -1,5 +1,12 @@
 import { cn } from "@/lib/utils";
 
+// Import category images
+import selfCareImage from "@/assets/categories/self-care-64x64.png";
+import studyingImage from "@/assets/categories/studying-64x64.png";
+import cleaningPathImage from "@/assets/categories/cleaning-path-64x64.png";
+import totalStreakImage from "@/assets/categories/total-streak-64x64.png";
+import progressPlaceholder from "@/assets/images/progress-placeholder-64x64.png";
+
 interface ProgressRingProps {
   progress: number; // 0-100
   size?: "sm" | "md" | "lg";
@@ -42,15 +49,22 @@ export function ProgressRing({
   const circumference = normalizedRadius * 2 * Math.PI;
   const strokeDasharray = `${(progress / 100) * circumference} ${circumference}`;
 
-  // Generate image path based on category
+  // Get image based on category
   const getImagePath = () => {
     if (!category) {
-      return "/placeholders/progress-placeholder-64x64.png";
+      return progressPlaceholder;
     }
 
-    // Convert category to lowercase and replace spaces with hyphens
-    const categorySlug = category.toLowerCase().replace(/\s+/g, '-');
-    return `/placeholders/categories/${categorySlug}-64x64.png`;
+    // Map category names to imported images
+    const categoryMap: Record<string, string> = {
+      "self care": selfCareImage,
+      "studying": studyingImage,
+      "cleaning path": cleaningPathImage,
+      "total streak": totalStreakImage,
+    };
+
+    const categoryKey = category.toLowerCase();
+    return categoryMap[categoryKey] || progressPlaceholder;
   };
 
   return (
