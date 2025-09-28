@@ -3,7 +3,7 @@ import { Star, Trophy, Target, Zap, Award } from "lucide-react";
 import { ReactNode } from "react";
 
 interface AchievementBadgeProps {
-  icon?: "star" | "trophy" | "target" | "zap" | "award" | "first-task" | "silver" | "gold";
+  icon?: "star" | "trophy" | "target" | "zap" | "award" | "first-task" | "silver" | "gold" | "bronze" | "cleaning" | "self-care" | "studying" | "total-streak" | "algae" | "crab" | "shark" | "seaturtle" | "snail2" | "angler" | "puffer";
   title: string;
   description?: string;
   isUnlocked?: boolean;
@@ -21,11 +21,28 @@ const iconMap = {
   award: Award,
 };
 
-// Custom image icons
+// Custom image icons from icons directory
 const customIconMap = {
-  "first-task": "/placeholders/achievements/bronze_32x32.png",
-  "gold": "/placeholders/achievements/gold_1_32x32.png",
-  "silver": "/placeholders/achievements/silver_1_32x32.png",
+  "first-task": "/icons/lightning.png",
+  "gold": "/icons/gold.png",
+  "silver": "/icons/silver.png",
+  "bronze": "/icons/bronze.png",
+  "star": "/icons/star.png",
+  "trophy": "/icons/trophy.png",
+  "target": "/icons/target.png",
+  "zap": "/icons/lightning.png",
+  "award": "/icons/Ba focustime.png",
+  "cleaning": "/icons/cleaning.png",
+  "self-care": "/icons/self-care.png",
+  "studying": "/icons/studying.png",
+  "total-streak": "/icons/total-streak.png",
+  "algae": "/icons/algae.png",
+  "crab": "/icons/crab.png",
+  "shark": "/icons/shark.png",
+  "seaturtle": "/icons/seaturtle.png",
+  "snail2": "/icons/snail2.png",
+  "angler": "/icons/angler.png",
+  "puffer": "/icons/puffer.png",
 };
 
 const sizeClasses = {
@@ -56,8 +73,8 @@ export function AchievementBadge({
   onClick,
   children
 }: AchievementBadgeProps) {
-  const IconComponent = iconMap[icon as keyof typeof iconMap];
   const customIconPath = customIconMap[icon as keyof typeof customIconMap];
+  const IconComponent = iconMap[icon as keyof typeof iconMap];
   const isCustomIcon = !!customIconPath;
 
   return (
@@ -95,7 +112,7 @@ export function AchievementBadge({
             className={cn(
               imageSizeClasses[size],
               "relative z-0",
-              isUnlocked ? "opacity-100" : "opacity-100"
+              isUnlocked ? "opacity-100" : "opacity-60 grayscale"
             )}
             style={{ imageRendering: 'pixelated' }}
           />
@@ -105,7 +122,7 @@ export function AchievementBadge({
               className={cn(
                 iconSizeClasses[size],
                 "relative z-0",
-                isUnlocked ? "text-white" : "text-white"
+                isUnlocked ? "text-white" : "text-white opacity-60"
               )}
             />
           )
