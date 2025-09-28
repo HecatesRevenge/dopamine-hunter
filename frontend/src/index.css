@@ -1,69 +1,304 @@
-@import "tailwindcss";
-:root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+/* ADHD-Friendly Gamified Task Management Design System */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap');
 
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
-body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
-}
-
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
-
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
-
-@media (prefers-color-scheme: light) {
+@layer base {
   :root {
-    color: #213547;
-    background-color: #ffffff;
+    /* Ocean-themed background system */
+    --background: 220 26% 97%;
+    --background-secondary: 215 25% 95%;
+    --background-tertiary: 210 22% 92%;
+    --foreground: 215 25% 15%;
+
+    /* Card system with glassmorphism */
+    --card: 0 0% 100%;
+    --card-secondary: 220 20% 98%;
+    --card-overlay: 220 20% 98% / 0.8;
+    --card-foreground: 215 25% 15%;
+
+    /* Gamification colors */
+    --primary: 195 85% 45%;          /* Ocean blue */
+    --primary-light: 195 85% 55%;
+    --primary-dark: 195 85% 35%;
+    --primary-foreground: 0 0% 100%;
+
+    /* Achievement & success colors */
+    --success: 150 75% 45%;
+    --success-light: 150 75% 55%;
+    --success-foreground: 0 0% 100%;
+
+    /* Energy & focus colors */
+    --accent: 35 95% 60%;             /* Golden yellow */
+    --accent-light: 35 95% 70%;
+    --accent-foreground: 35 95% 15%;
+
+    /* Streak & progress colors */
+    --streak: 285 85% 55%;            /* Purple */
+    --streak-light: 285 85% 65%;
+    --streak-foreground: 0 0% 100%;
+
+    /* UI System colors */
+    --secondary: 210 15% 88%;
+    --secondary-foreground: 215 25% 25%;
+
+    --muted: 210 15% 92%;
+    --muted-foreground: 215 15% 45%;
+
+    --border: 215 20% 85%;
+    --input: 215 20% 88%;
+    --ring: 195 85% 45%;
+
+    /* Gamification gradients */
+    --gradient-ocean: linear-gradient(135deg, hsl(195 85% 45%), hsl(220 85% 60%));
+    --gradient-achievement: linear-gradient(135deg, hsl(150 75% 45%), hsl(180 75% 45%));
+    --gradient-energy: linear-gradient(135deg, hsl(35 95% 60%), hsl(45 95% 55%));
+    --gradient-streak: linear-gradient(135deg, hsl(285 85% 55%), hsl(310 85% 60%));
+    --gradient-glass: linear-gradient(135deg, hsl(220 20% 98% / 0.8), hsl(220 20% 95% / 0.6));
+
+    /* Animations & effects */
+    --shadow-soft: 0 4px 20px hsl(215 25% 15% / 0.08);
+    --shadow-medium: 0 8px 30px hsl(215 25% 15% / 0.12);
+    --shadow-strong: 0 12px 40px hsl(215 25% 15% / 0.16);
+    --shadow-glow: 0 0 30px hsl(195 85% 45% / 0.3);
+
+    --radius: 16px;
+    --radius-sm: 8px;
+    --radius-lg: 24px;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 215 25% 15%;
+
+    --destructive: 0 75% 55%;
+    --destructive-foreground: 0 0% 100%;
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
   }
-  a:hover {
-    color: #747bff;
+
+  .dark {
+    /* Dark Ocean-themed background system */
+    --background: 220 26% 8%;
+    --background-secondary: 215 25% 10%;
+    --background-tertiary: 210 22% 12%;
+    --foreground: 215 25% 95%;
+
+    /* Dark Card system with glassmorphism */
+    --card: 220 20% 12%;
+    --card-secondary: 220 20% 10%;
+    --card-overlay: 220 20% 15% / 0.9;
+    --card-foreground: 215 25% 95%;
+
+    /* Gamification colors (adjusted for dark) */
+    --primary: 195 85% 55%;          /* Brighter ocean blue for dark */
+    --primary-light: 195 85% 65%;
+    --primary-dark: 195 85% 45%;
+    --primary-foreground: 0 0% 100%;
+
+    /* Achievement & success colors (adjusted) */
+    --success: 150 75% 55%;
+    --success-light: 150 75% 65%;
+    --success-foreground: 0 0% 100%;
+
+    /* Energy & focus colors (adjusted) */
+    --accent: 35 95% 70%;             /* Brighter golden yellow */
+    --accent-light: 35 95% 80%;
+    --accent-foreground: 35 95% 10%;
+
+    /* Streak & progress colors (adjusted) */
+    --streak: 285 85% 65%;            /* Brighter purple */
+    --streak-light: 285 85% 75%;
+    --streak-foreground: 0 0% 100%;
+
+    /* Dark UI System colors */
+    --secondary: 210 15% 18%;
+    --secondary-foreground: 215 25% 85%;
+
+    --muted: 210 15% 15%;
+    --muted-foreground: 215 15% 65%;
+
+    --border: 215 20% 20%;
+    --input: 215 20% 18%;
+    --ring: 195 85% 55%;
+
+    /* Dark gradients */
+    --gradient-ocean: linear-gradient(135deg, hsl(195 85% 55%), hsl(220 85% 70%));
+    --gradient-achievement: linear-gradient(135deg, hsl(150 75% 55%), hsl(180 75% 55%));
+    --gradient-energy: linear-gradient(135deg, hsl(35 95% 70%), hsl(45 95% 65%));
+    --gradient-streak: linear-gradient(135deg, hsl(285 85% 65%), hsl(310 85% 70%));
+    --gradient-glass: linear-gradient(135deg, hsl(220 20% 15% / 0.9), hsl(220 20% 12% / 0.7));
+
+    /* Dark shadows & effects */
+    --shadow-soft: 0 4px 20px hsl(0 0% 0% / 0.3);
+    --shadow-medium: 0 8px 30px hsl(0 0% 0% / 0.4);
+    --shadow-strong: 0 12px 40px hsl(0 0% 0% / 0.5);
+    --shadow-glow: 0 0 30px hsl(195 85% 55% / 0.4);
+
+    --popover: 220 20% 12%;
+    --popover-foreground: 215 25% 95%;
+
+    --destructive: 0 75% 65%;
+    --destructive-foreground: 0 0% 100%;
+
+    /* Dark sidebar */
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
   }
-  button {
-    background-color: #f9f9f9;
+}
+
+@layer base {
+  * {
+    @apply border-border;
   }
+
+  body {
+    @apply bg-background text-foreground font-inter antialiased;
+  }
+}
+
+@layer components {
+  /* Gamification Components */
+  .achievement-badge {
+    @apply relative overflow-hidden rounded-full p-3 transition-all duration-300;
+    background: var(--gradient-achievement);
+    box-shadow: var(--shadow-soft);
+  }
+
+  .achievement-badge:hover {
+    transform: scale(1.05);
+    box-shadow: var(--shadow-glow);
+  }
+
+  .progress-ring {
+    @apply relative;
+    filter: drop-shadow(0 4px 12px hsl(195 85% 45% / 0.3));
+  }
+
+  .streak-indicator {
+    @apply relative overflow-hidden rounded-lg p-4;
+    background: var(--gradient-streak);
+    box-shadow: var(--shadow-soft);
+  }
+
+  .glass-card {
+    @apply backdrop-blur-md border border-white/20 rounded-2xl;
+    background: var(--gradient-glass);
+    box-shadow: var(--shadow-soft);
+  }
+
+  .nav-item {
+    @apply relative px-4 py-2 rounded-xl transition-all duration-300 font-medium;
+  }
+
+  .nav-item:hover {
+    @apply bg-white/10 backdrop-blur-sm;
+    box-shadow: var(--shadow-soft);
+  }
+
+  .nav-item.active {
+    background: var(--gradient-ocean);
+    @apply text-white shadow-lg;
+    box-shadow: var(--shadow-glow);
+  }
+
+  /* Animation utilities */
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+
+  .animate-pulse-glow {
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
+
+  .animate-bounce-gentle {
+    animation: bounce-gentle 2s ease-in-out infinite;
+  }
+}
+
+@layer utilities {
+  .font-inter {
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  .font-poppins {
+    font-family: 'Poppins', system-ui, sans-serif;
+  }
+
+  .bg-ocean {
+    background: var(--gradient-ocean);
+  }
+
+  .bg-achievement {
+    background: var(--gradient-achievement);
+  }
+
+  .bg-energy {
+    background: var(--gradient-energy);
+  }
+
+  .bg-streak {
+    background: var(--gradient-streak);
+  }
+
+  .bg-glass {
+    background: var(--gradient-glass);
+  }
+
+  .shadow-game {
+    box-shadow: var(--shadow-medium);
+  }
+
+  .shadow-glow {
+    box-shadow: var(--shadow-glow);
+  }
+}
+
+/* Custom Animations */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { 
+    box-shadow: 0 0 20px hsl(195 85% 45% / 0.3);
+    transform: scale(1);
+  }
+  50% { 
+    box-shadow: 0 0 40px hsl(195 85% 45% / 0.6);
+    transform: scale(1.02);
+  }
+}
+
+@keyframes bounce-gentle {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-4px); }
+}
+
+/* Progress Ring Animation */
+@keyframes progress-fill {
+  from {
+    stroke-dasharray: 0 283;
+  }
+  to {
+    stroke-dasharray: 283 283;
+  }
+}
+
+.progress-ring-animate {
+  animation: progress-fill 1.5s ease-out forwards;
 }
