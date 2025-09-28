@@ -19,9 +19,10 @@ const navigationItems = [
 interface NavigationProps {
   currentPage?: string;
   onNavigate?: (pageId: string) => void;
+  onGoldfishClick?: () => void;
 }
 
-export function Navigation({ currentPage = "home", onNavigate }: NavigationProps) {
+export function Navigation({ currentPage = "home", onNavigate, onGoldfishClick }: NavigationProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isDark, setIsDark] = useState(true);
 
@@ -60,16 +61,20 @@ export function Navigation({ currentPage = "home", onNavigate }: NavigationProps
     setIsOpen(false);
   };
 
+  const handleGoldfishClick = () => {
+    onGoldfishClick?.();
+  };
+
   return (
     <div className="fixed top-0 left-0 right-0 z-50 glass-card m-4 p-4">
       <div className="flex items-center justify-between">
         {/* Logo, Menu & Title */}
         <div className="flex items-center gap-3">
-          <img 
-            src={goldfishLogo} 
-            alt="Goldfish Logo" 
+          <img
+            src={goldfishLogo}
+            alt="Goldfish Logo"
             className="w-12 h-12 animate-float cursor-pointer transition-transform hover:scale-110"
-            onClick={() => handleNavigate("minigame")}
+            onClick={handleGoldfishClick}
           />
           
           {/* Mobile Menu Button (moved here) */}
@@ -80,28 +85,28 @@ export function Navigation({ currentPage = "home", onNavigate }: NavigationProps
               </Button>
             </SheetTrigger>
             <SheetContent side="right" className="w-80 bg-background/95 backdrop-blur-md">
-            <div className="flex flex-col gap-4 mt-8">
-              {navigationItems.map((item) => (
-                <Button
-                  key={item.id}
-                  variant="ghost"
-                  className={`nav-item justify-start h-14 ${currentPage === item.id ? 'active' : ''}`}
-                  onClick={() => handleNavigate(item.id)}
-                >
-                  <div className={`w-10 h-10 rounded-full ${item.color} flex items-center justify-center mr-4`}>
-                    {item.id === "appearance" ? (
-                      isDark ? <Sun className="w-5 h-5 text-white" /> : <Moon className="w-5 h-5 text-white" />
-                    ) : (
-                      <item.icon className="w-5 h-5 text-white" />
-                    )}
-                  </div>
-                  <span className="text-lg font-medium">{item.label}</span>
-                </Button>
-              ))}
-            </div>
-          </SheetContent>
-        </Sheet>
-          
+              <div className="flex flex-col gap-4 mt-8">
+                {navigationItems.map((item) => (
+                  <Button
+                    key={item.id}
+                    variant="ghost"
+                    className={`nav-item justify-start h-14 ${currentPage === item.id ? 'active' : ''}`}
+                    onClick={() => handleNavigate(item.id)}
+                  >
+                    <div className={`w-10 h-10 rounded-full ${item.color} flex items-center justify-center mr-4`}>
+                      {item.id === "appearance" ? (
+                        isDark ? <Sun className="w-5 h-5 text-white" /> : <Moon className="w-5 h-5 text-white" />
+                      ) : (
+                        <item.icon className="w-5 h-5 text-white" />
+                      )}
+                    </div>
+                    <span className="text-lg font-medium">{item.label}</span>
+                  </Button>
+                ))}
+              </div>
+            </SheetContent>
+          </Sheet>
+
           <h1 className="text-xl font-poppins font-bold bg-ocean bg-clip-text text-transparent">
             TaskQuest
           </h1>

@@ -31,8 +31,11 @@ import {
   ChevronRight,
   Zap
 } from "lucide-react";
+interface HomeProps {
+  onGoldfishClick?: () => void;
+}
 
-const Home = () => {
+const Home = ({ onGoldfishClick }: HomeProps) => {
   const [currentPage, setCurrentPage] = useState("home");
   const [streakData, setStreakData] = useState({
     totalVisits: 0,
@@ -50,7 +53,7 @@ const Home = () => {
     // Mock implementation for now
     const today = new Date().toDateString();
     const savedData = localStorage.getItem('streakData');
-    let currentData = savedData ? JSON.parse(savedData) : {
+    const currentData = savedData ? JSON.parse(savedData) : {
       totalVisits: 0,
       currentDailyStreak: 0,
       bestStreak: 0,
@@ -138,7 +141,7 @@ const Home = () => {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <Navigation currentPage={currentPage} onNavigate={setCurrentPage} />
+      <Navigation currentPage={currentPage} onNavigate={setCurrentPage} onGoldfishClick={onGoldfishClick} />
 
       <main className="pt-24 px-4 pb-8">
         <div className="max-w-7xl mx-auto">
