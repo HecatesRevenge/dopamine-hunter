@@ -1,8 +1,10 @@
+# backend.py
 # backend makes database:
 # profile
 # achievements
 # skill tree
-from typing import Union, Optional
+
+from typing import Union, Optional, List
 from fastapi import FastAPI
 from datetime import datetime, timedelta
 from pydantic import BaseModel
@@ -10,31 +12,33 @@ from fishgame import Fish
 
 app = FastAPI()
 
+# -------------------------
+# Achievements
+# -------------------------
 class Achievements:
     def __init__(self, title: str, description: str, due_date: datetime = None):
         self.title = title
-        self.description = description  # If no due_date is provided, default to 7 days from now
+        self.description = description
         self.due_date = due_date if due_date else datetime.now() + timedelta(days=7)
-        self.date_completed = None  # None until the achievement is completed
+        self.date_completed = None
 
     def complete(self):
-        self.date_completed = datetime.now()  # mark completion with current time
+        self.date_completed = datetime.now()
 
 class StreakAchievement(Achievements):
     def __init__(self, title: str, description: str, streak_required: int):
         super().__init__(title, description)
         self.streak_required = streak_required
         self.current_streak = 0
-    
+
     def update_streak(self, did_task_today: bool):
         if did_task_today:
             self.current_streak += 1
             if self.current_streak >= self.streak_required:
                 self.complete()
         else:
-            self.current_streak = 0  # streak broken
-    
-    # Subclass for total tasks achievement
+            self.current_streak = 0
+
 class TotalTasksAchievement(Achievements):
     def __init__(self, title: str, description: str, total_required: int):
         super().__init__(title, description)
@@ -45,7 +49,27 @@ class TotalTasksAchievement(Achievements):
         self.total_completed += tasks_done_today
         if self.total_completed >= self.total_required:
             self.complete()
-    
+
+# -------------------------
+# Feeding streak achievement subclass
+# -------------------------
+class FeedingStreakAchievement(Achievements):
+    def __init__(self, title: str, description: str, days_required: int = 7):
+        super().__init__(title, description)
+        self.days_required = days_required
+        self.current_streak = 0
+
+    def update_streak(self, fed_today: bool):
+        if fed_today:
+            self.current_streak += 1
+            if self.current_streak >= self.days_required:
+                self.complete()
+        else:
+            self.current_streak = 0
+
+# -------------------------
+# Pydantic schemas
+# -------------------------
 class AchievementSchema(BaseModel):
     title: str
     description: str
@@ -53,7 +77,7 @@ class AchievementSchema(BaseModel):
     date_completed: Optional[datetime] = None
 
     class Config:
-        orm_mode = True  # Needed for FastAPI to serialize class instances
+        orm_mode = True
 
 class StreakAchievementSchema(AchievementSchema):
     streak_required: int
@@ -63,12 +87,17 @@ class TotalTasksAchievementSchema(AchievementSchema):
     total_required: int
     total_completed: int
 
+# -------------------------
 # In-memory storage
-streak_achievements = []
-total_task_achievements = []
+# -------------------------
+streak_achievements: List[StreakAchievement] = []
+total_task_achievements: List[TotalTasksAchievement] = []
+
+users_fish: dict[str, List[Fish]] = {}
+users_feed_achievements: dict[str, FeedingStreakAchievement] = {}
 
 # -------------------------
-# Create new streak achievement
+# Achievement endpoints
 # -------------------------
 @app.post("/streak_achievements", response_model=StreakAchievementSchema)
 def create_streak_achievement(title: str, description: str, streak_required: int):
@@ -76,18 +105,12 @@ def create_streak_achievement(title: str, description: str, streak_required: int
     streak_achievements.append(ach)
     return ach
 
-# -------------------------
-# Create new total tasks achievement
-# -------------------------
 @app.post("/total_task_achievements", response_model=TotalTasksAchievementSchema)
 def create_total_task_achievement(title: str, description: str, total_required: int):
     ach = TotalTasksAchievement(title, description, total_required)
     total_task_achievements.append(ach)
     return ach
 
-# -------------------------
-# Update streak progress
-# -------------------------
 @app.post("/streak_achievements/{index}/update", response_model=StreakAchievementSchema)
 def update_streak(index: int, did_task_today: bool):
     try:
@@ -97,9 +120,6 @@ def update_streak(index: int, did_task_today: bool):
     except IndexError:
         return {"error": "Achievement not found"}
 
-# -------------------------
-# Update total tasks progress
-# -------------------------
 @app.post("/total_task_achievements/{index}/update", response_model=TotalTasksAchievementSchema)
 def update_total_tasks(index: int, tasks_done_today: int):
     try:
@@ -109,46 +129,95 @@ def update_total_tasks(index: int, tasks_done_today: int):
     except IndexError:
         return {"error": "Achievement not found"}
 
-# -------------------------
-# Get all streak achievements
-# -------------------------
-@app.get("/streak_achievements", response_model=list[StreakAchievementSchema])
+@app.get("/streak_achievements", response_model=List[StreakAchievementSchema])
 def get_streak_achievements():
     return streak_achievements
 
-# -------------------------
-# Get all total task achievements
-# -------------------------
-@app.get("/total_task_achievements", response_model=list[TotalTasksAchievementSchema])
+@app.get("/total_task_achievements", response_model=List[TotalTasksAchievementSchema])
 def get_total_task_achievements():
     return total_task_achievements
 
-# In-memory storage for simplicity
-users_fish = {}
-
 # -------------------------
-# Update fishes categories
+# Fish endpoints
 # -------------------------
 @app.post("/users/{user_id}/fish")
 def create_fish(user_id: str, name: str, category: str):
     fish = Fish(name, category)
     users_fish.setdefault(user_id, []).append(fish)
-    return {"name": fish.name, "category": fish.category, "level": fish.level, "xp": fish.xp}
+    return {"name": fish.name, "category": fish.category, "level": fish.level, "xp": fish.xp, "feed_meter": fish.feed_meter}
 
-# -------------------------
-# Update fish tasks
-# -------------------------
 @app.post("/users/{user_id}/fish/{fish_index}/complete_task")
 def complete_task(user_id: str, fish_index: int, num_tasks: int = 1):
     fish = users_fish[user_id][fish_index]
     fish.complete_task(num_tasks)
     return {"name": fish.name, "level": fish.level, "xp": fish.xp}
 
-# -------------------------
-# Update fish achievements
-# -------------------------
 @app.post("/users/{user_id}/fish/{fish_index}/complete_achievement")
 def complete_achievement(user_id: str, fish_index: int):
     fish = users_fish[user_id][fish_index]
     fish.complete_achievement()
     return {"name": fish.name, "level": fish.level, "xp": fish.xp, "achievements_completed": fish.achievements_completed}
+
+# -------------------------
+# Feed all fishes
+# -------------------------
+@app.post("/users/{user_id}/feed_all")
+def feed_all_fish(user_id: str):
+    if user_id not in users_fish:
+        return {"error": "No fishes found for this user."}
+
+    fed_today = False
+    for fish in users_fish[user_id]:
+        if fish.alive:
+            fish.feed()
+            fed_today = True
+
+    # Update feeding streak achievement
+    if user_id not in users_feed_achievements:
+        users_feed_achievements[user_id] = FeedingStreakAchievement(
+            title="Dedicated Fish Keeper",
+            description="Feed all your fishes every day for a week."
+        )
+    users_feed_achievements[user_id].update_streak(fed_today)
+
+    return {
+        "message": "All fishes fed!",
+        "feed_streak": users_feed_achievements[user_id].current_streak,
+        "achievement_completed": users_feed_achievements[user_id].date_completed is not None
+    }
+
+# -------------------------
+# Daily check for feed meters
+# -------------------------
+@app.post("/users/{user_id}/daily_feed_check")
+def daily_feed_check(user_id: str):
+    if user_id not in users_fish:
+        return {"error": "No fishes found for this user."}
+
+    deaths = 0
+    for fish in users_fish[user_id]:
+        fish.daily_feed_check()
+        if not fish.alive:
+            deaths += 1
+
+    return {"deaths_today": deaths}
+
+# -------------------------
+# Get all user fishes with status
+# -------------------------
+@app.get("/users/{user_id}/fishes")
+def get_user_fishes(user_id: str):
+    if user_id not in users_fish:
+        return {"error": "No fishes found for this user."}
+    result = []
+    for fish in users_fish[user_id]:
+        result.append({
+            "name": fish.name,
+            "category": fish.category,
+            "level": fish.level,
+            "xp": fish.xp,
+            "feed_meter": fish.feed_meter,
+            "alive": fish.alive,
+            "achievements_completed": fish.achievements_completed
+        })
+    return result
