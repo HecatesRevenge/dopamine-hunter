@@ -1,11 +1,11 @@
 import json
 import os
 from datetime import datetime
-from ..models import Profile, Task, Achievement
+from ..models import User, Task, Achievement
 
 # File paths for data storage
 DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
-PROFILES_FILE = os.path.join(DATA_DIR, "profiles.json")
+USERS_FILE = os.path.join(DATA_DIR, "users.json")
 TASKS_FILE = os.path.join(DATA_DIR, "tasks.json")
 ACHIEVEMENTS_FILE = os.path.join(DATA_DIR, "achievements.json")
 
@@ -34,9 +34,9 @@ def _model_to_dict(model) -> dict:
     """Convert a Pydantic model to dictionary"""
     return model.model_dump()
 
-def _dict_to_profile(data: dict) -> Profile:
-    """Convert dictionary to Profile model"""
-    return Profile(**data)
+def _dict_to_user(data: dict) -> User:
+    """Convert dictionary to User model"""
+    return User(**data)
 
 def _dict_to_task(data: dict) -> Task:
     """Convert dictionary to Task model"""
@@ -46,38 +46,38 @@ def _dict_to_achievement(data: dict) -> Achievement:
     """Convert dictionary to Achievement model"""
     return Achievement(**data)
 
-# Profile functions
-def get_profiles() -> list[Profile]:
-    """Get all profiles from file storage"""
-    data = _load_json_file(PROFILES_FILE)
-    return [_dict_to_profile(item) for item in data]
+# User functions
+def get_users() -> list[User]:
+    """Get all users from file storage"""
+    data = _load_json_file(USERS_FILE)
+    return [_dict_to_user(item) for item in data]
 
-def create_profile(profile: Profile) -> Profile:
-    """Create a new profile and save to file"""
-    profiles = get_profiles()
-    profile.id = len(profiles) + 1
-    profile.created_at = datetime.now()
+def create_user(user: User) -> User:
+    """Create a new user and save to file"""
+    users = get_users()
+    user.id = len(users) + 1
+    user.created_at = datetime.now()
     
-    profiles.append(profile)
-    _save_json_file(PROFILES_FILE, [_model_to_dict(p) for p in profiles])
-    return profile
+    users.append(user)
+    _save_json_file(USERS_FILE, [_model_to_dict(p) for p in users])
+    return user
 
-def get_profile_by_id(profile_id: int) -> Profile | None:
-    """Get a profile by ID"""
-    profiles = get_profiles()
-    for profile in profiles:
-        if profile.id == profile_id:
-            return profile
+def get_user_by_id(user_id: int) -> User | None:
+    """Get a user by ID"""
+    users = get_users()
+    for user in users:
+        if user.id == user_id:
+            return user
     return None
 
 # Task functions
-def get_tasks(profile_id: int | None = None) -> list[Task]:
-    """Get all tasks, optionally filtered by profile_id"""
+def get_tasks(user_id: int | None = None) -> list[Task]:
+    """Get all tasks, optionally filtered by user_id"""
     data = _load_json_file(TASKS_FILE)
     tasks = [_dict_to_task(item) for item in data]
     
-    if profile_id:
-        return [task for task in tasks if task.profile_id == profile_id]
+    if user_id:
+        return [task for task in tasks if task.user_id == user_id]
     return tasks
 
 def create_task(task: Task) -> Task:
@@ -121,13 +121,13 @@ def delete_task(task_id: int) -> bool:
     return False
 
 # Achievement functions
-def get_achievements(profile_id: int | None = None) -> list[Achievement]:
-    """Get all achievements, optionally filtered by profile_id"""
+def get_achievements(user_id: int | None = None) -> list[Achievement]:
+    """Get all achievements, optionally filtered by user_id"""
     data = _load_json_file(ACHIEVEMENTS_FILE)
     achievements = [_dict_to_achievement(item) for item in data]
     
-    if profile_id:
-        return [achievement for achievement in achievements if achievement.profile_id == profile_id]
+    if user_id:
+        return [achievement for achievement in achievements if achievement.user_id == user_id]
     return achievements
 
 def create_achievement(achievement: Achievement) -> Achievement:

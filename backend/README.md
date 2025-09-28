@@ -26,20 +26,20 @@ Once the server is running, visit:
 
 ## API Endpoints
 
-### Profiles
-- `GET /profiles` - Get all profiles
-- `POST /profiles` - Create a new profile
-- `GET /profiles/{profile_id}` - Get a specific profile
+### Users
+- `GET /users` - Get all users
+- `POST /users` - Create a new user
+- `GET /users/{user_id}` - Get a specific user
 
 ### Tasks
-- `GET /tasks` - Get all tasks (optionally filter by profile_id)
+- `GET /tasks` - Get all tasks (optionally filter by user_id)
 - `POST /tasks` - Create a new task
 - `GET /tasks/{task_id}` - Get a specific task
 - `PUT /tasks/{task_id}` - Update a task
 - `DELETE /tasks/{task_id}` - Delete a task
 
 ### Achievements
-- `GET /achievements` - Get all achievements (optionally filter by profile_id)
+- `GET /achievements` - Get all achievements (optionally filter by user_id)
 - `POST /achievements` - Create a new achievement
 - `GET /achievements/{achievement_id}` - Get a specific achievement
 - `PUT /achievements/{achievement_id}` - Update an achievement
@@ -49,7 +49,7 @@ Once the server is running, visit:
 
 ## Models
 
-### Profile
+### User
 - `id`: Unique identifier
 - `username`: User's username
 - `profile_pic`: Optional profile picture URL
@@ -62,7 +62,7 @@ Once the server is running, visit:
 - `status`: Task status (pending, completed, cancelled)
 - `created_at`: Creation timestamp
 - `completed_at`: Completion timestamp
-- `profile_id`: Associated profile ID
+- `user_id`: Associated user ID
 
 ### Achievement
 - `id`: Unique identifier
@@ -72,7 +72,7 @@ Once the server is running, visit:
 - `is_completed`: Completion status
 - `created_at`: Creation timestamp
 - `completed_at`: Completion timestamp
-- `profile_id`: Associated profile ID
+- `user_id`: Associated user ID
 - `streak_required`: Required streak for streak achievements
 - `current_streak`: Current streak count
 - `total_required`: Required total for total task achievements
@@ -92,7 +92,7 @@ python run_all_tests.py
 
 # Run individual test files
 python test_health.py
-python test_profiles.py
+python test_users.py
 python test_tasks.py
 python test_achievements.py
 python test_database.py
@@ -119,14 +119,14 @@ backend/
 │   ├── routes/
 │   │   ├── __init__.py
 │   │   ├── api.py         # API router configuration
-│   │   ├── profiles.py    # Profile endpoints
+│   │   ├── users.py    # User endpoints
 │   │   ├── tasks.py       # Task endpoints
 │   │   └── achievements.py # Achievement endpoints
 │   └── core/
 │       ├── __init__.py
 │       └── config.py          # Application settings
 ├── data/                      # JSON file storage
-│   ├── profiles.json          # Profile data
+│   ├── users.json          # User data
 │   ├── tasks.json             # Task data
 │   └── achievements.json      # Achievement data
 ├── main.py                    # FastAPI application entry point
@@ -136,7 +136,7 @@ backend/
 
 ## Features
 
-- **Profiles**: User profile management
+- **Users**: User user management
 - **Tasks**: Task creation, completion, and tracking
 - **Achievements**: Achievement system with streak and total task tracking
 - **File-based Storage**: Persistent JSON file storage (no database required)

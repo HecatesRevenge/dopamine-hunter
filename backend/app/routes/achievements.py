@@ -9,9 +9,9 @@ from ..db.database import (
 router = APIRouter()
 
 @router.get("/", response_model=list[Achievement])
-async def get_achievements_endpoint(profile_id: int | None = Query(None)):
-    """Get all achievements, optionally filtered by profile_id"""
-    return get_achievements(profile_id)
+async def get_achievements_endpoint(user_id: int | None = Query(None)):
+    """Get all achievements, optionally filtered by user_id"""
+    return get_achievements(user_id)
 
 @router.post("/", response_model=Achievement)
 async def create_achievement_endpoint(achievement: Achievement):

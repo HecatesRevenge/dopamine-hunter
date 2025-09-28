@@ -12,15 +12,15 @@ client = TestClient(app)
 
 def test_create_task():
     """Test creating a new task"""
-    # First create a profile to associate the task with
-    profile_data = {"username": "taskuser"}
-    profile_response = client.post("/profiles", json=profile_data)
-    profile_id = profile_response.json()["id"]
+    # First create a user to associate the task with
+    user_data = {"username": "taskuser"}
+    user_response = client.post("/users", json=user_data)
+    user_id = user_response.json()["id"]
     
     task_data = {
         "title": "Test Task",
         "description": "A test task description",
-        "profile_id": profile_id
+        "user_id": user_id
     }
     
     response = client.post("/tasks", json=task_data)
@@ -30,7 +30,7 @@ def test_create_task():
     assert data["title"] == "Test Task"
     assert data["description"] == "A test task description"
     assert data["status"] == "pending"
-    assert data["profile_id"] == profile_id
+    assert data["user_id"] == user_id
     assert data["id"] is not None
     assert data["created_at"] is not None
 
@@ -44,39 +44,39 @@ def test_get_tasks():
     # Should have at least one task from the create test
     assert len(data) >= 1
 
-def test_get_tasks_by_profile():
-    """Test getting tasks filtered by profile_id"""
-    # Create a profile and task
-    profile_data = {"username": "filteruser"}
-    profile_response = client.post("/profiles", json=profile_data)
-    profile_id = profile_response.json()["id"]
+def test_get_tasks_by_user():
+    """Test getting tasks filtered by user_id"""
+    # Create a user and task
+    user_data = {"username": "filteruser"}
+    user_response = client.post("/users", json=user_data)
+    user_id = user_response.json()["id"]
     
     task_data = {
         "title": "Filtered Task",
-        "profile_id": profile_id
+        "user_id": user_id
     }
     client.post("/tasks", json=task_data)
     
-    # Get tasks for this profile
-    response = client.get(f"/tasks?profile_id={profile_id}")
+    # Get tasks for this user
+    response = client.get(f"/tasks?user_id={user_id}")
     
     assert response.status_code == 200
     data = response.json()
     assert isinstance(data, list)
-    # All tasks should belong to the specified profile
+    # All tasks should belong to the specified user
     for task in data:
-        assert task["profile_id"] == profile_id
+        assert task["user_id"] == user_id
 
 def test_update_task():
     """Test updating a task"""
-    # Create a profile and task
-    profile_data = {"username": "updateuser"}
-    profile_response = client.post("/profiles", json=profile_data)
-    profile_id = profile_response.json()["id"]
+    # Create a user and task
+    user_data = {"username": "updateuser"}
+    user_response = client.post("/users", json=user_data)
+    user_id = user_response.json()["id"]
     
     task_data = {
         "title": "Original Task",
-        "profile_id": profile_id
+        "user_id": user_id
     }
     create_response = client.post("/tasks", json=task_data)
     task_id = create_response.json()["id"]
@@ -86,7 +86,7 @@ def test_update_task():
         "title": "Updated Task",
         "description": "Updated description",
         "status": "completed",
-        "profile_id": profile_id
+        "user_id": user_id
     }
     
     response = client.put(f"/tasks/{task_id}", json=update_data)
@@ -100,14 +100,14 @@ def test_update_task():
 
 def test_delete_task():
     """Test deleting a task"""
-    # Create a profile and task
-    profile_data = {"username": "deleteuser"}
-    profile_response = client.post("/profiles", json=profile_data)
-    profile_id = profile_response.json()["id"]
+    # Create a user and task
+    user_data = {"username": "deleteuser"}
+    user_response = client.post("/users", json=user_data)
+    user_id = user_response.json()["id"]
     
     task_data = {
         "title": "Task to Delete",
-        "profile_id": profile_id
+        "user_id": user_id
     }
     create_response = client.post("/tasks", json=task_data)
     task_id = create_response.json()["id"]
@@ -130,8 +130,8 @@ if __name__ == "__main__":
     test_get_tasks()
     print("PASS: Get tasks test passed!")
     
-    test_get_tasks_by_profile()
-    print("PASS: Get tasks by profile test passed!")
+    test_get_tasks_by_user()
+    print("PASS: Get tasks by user test passed!")
     
     test_update_task()
     print("PASS: Update task test passed!")

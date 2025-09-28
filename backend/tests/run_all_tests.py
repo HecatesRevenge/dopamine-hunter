@@ -17,25 +17,25 @@ def run_all_tests():
         test_health_endpoint()
         print("PASS: Health endpoint test passed!")
         
-        print("\nTesting Profile Endpoints...")
-        from test_profiles import (
-            test_create_profile, test_get_profiles, 
-            test_get_profile_by_id, test_get_nonexistent_profile
+        print("\nTesting User Endpoints...")
+        from test_users import (
+            test_create_user, test_get_users, 
+            test_get_user_by_id, test_get_nonexistent_user
         )
-        test_create_profile()
-        test_get_profiles()
-        test_get_profile_by_id()
-        test_get_nonexistent_profile()
-        print("PASS: All profile tests passed!")
+        test_create_user()
+        test_get_users()
+        test_get_user_by_id()
+        test_get_nonexistent_user()
+        print("PASS: All user tests passed!")
         
         print("\nTesting Task Endpoints...")
         from test_tasks import (
-            test_create_task, test_get_tasks, test_get_tasks_by_profile,
+            test_create_task, test_get_tasks, test_get_tasks_by_user,
             test_update_task, test_delete_task
         )
         test_create_task()
         test_get_tasks()
-        test_get_tasks_by_profile()
+        test_get_tasks_by_user()
         test_update_task()
         test_delete_task()
         print("PASS: All task tests passed!")
@@ -43,23 +43,23 @@ def run_all_tests():
         print("\nTesting Achievement Endpoints...")
         from test_achievements import (
             test_create_achievement, test_create_streak_achievement,
-            test_get_achievements, test_get_achievements_by_profile,
+            test_get_achievements, test_get_achievements_by_user,
             test_update_achievement
         )
         test_create_achievement()
         test_create_streak_achievement()
         test_get_achievements()
-        test_get_achievements_by_profile()
+        test_get_achievements_by_user()
         test_update_achievement()
         print("PASS: All achievement tests passed!")
         
         print("\nTesting Database Functions...")
         from test_database import (
-            test_profile_database_operations,
+            test_user_database_operations,
             test_task_database_operations,
             test_achievement_database_operations
         )
-        test_profile_database_operations()
+        test_user_database_operations()
         test_task_database_operations()
         test_achievement_database_operations()
         print("PASS: All database tests passed!")

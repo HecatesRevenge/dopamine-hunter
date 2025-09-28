@@ -17,8 +17,8 @@ cd backend/tests
 # Test health endpoint
 python test_health.py
 
-# Test profile endpoints
-python test_profiles.py
+# Test user endpoints
+python test_users.py
 
 # Test task endpoints
 python test_tasks.py
@@ -34,12 +34,12 @@ python test_database.py
 
 ### API Endpoints
 - ✅ Health endpoint
-- ✅ Profile CRUD operations
+- ✅ User CRUD operations
 - ✅ Task CRUD operations
 - ✅ Achievement CRUD operations
 
 ### Database Functions
-- ✅ Profile database operations
+- ✅ User database operations
 - ✅ Task database operations
 - ✅ Achievement database operations
 

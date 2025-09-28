@@ -9,9 +9,9 @@ from ..db.database import (
 router = APIRouter()
 
 @router.get("/", response_model=list[Task])
-async def get_tasks_endpoint(profile_id: int | None = Query(None)):
-    """Get all tasks, optionally filtered by profile_id"""
-    return get_tasks(profile_id)
+async def get_tasks_endpoint(user_id: int | None = Query(None)):
+    """Get all tasks, optionally filtered by user_id"""
+    return get_tasks(user_id)
 
 @router.post("/", response_model=Task)
 async def create_task_endpoint(task: Task):

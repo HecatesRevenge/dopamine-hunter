@@ -14,7 +14,7 @@ class AchievementType(str, Enum):
     CUSTOM = "custom"
 
 # Pydantic Models
-class Profile(BaseModel):
+class User(BaseModel):
     id: int | None = None
     username: str
     profile_pic: str | None = None
@@ -27,7 +27,7 @@ class Task(BaseModel):
     status: TaskStatus = TaskStatus.PENDING
     created_at: datetime | None = None
     completed_at: datetime | None = None
-    profile_id: int
+    user_id: int
 
 class Achievement(BaseModel):
     id: int | None = None
@@ -37,7 +37,7 @@ class Achievement(BaseModel):
     is_completed: bool = False
     created_at: datetime | None = None
     completed_at: datetime | None = None
-    profile_id: int
+    user_id: int
     
     # For streak achievements
     streak_required: int | None = None
