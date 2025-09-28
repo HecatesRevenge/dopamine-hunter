@@ -52,6 +52,8 @@ export function FishOverlay({ isOpen, onClose }: FishOverlayProps) {
     const animationRef = useRef<number>();
     const containerRef = useRef<HTMLDivElement>(null);
     const pelletIdCounter = useRef<number>(0);
+    const currentFishesRef = useRef<Fish[]>([]);
+    const currentPelletsRef = useRef<FishPellet[]>([]);
 
     // Initialize fish with random positions and properties
     const initializeFishes = useCallback(() => {
@@ -80,6 +82,7 @@ export function FishOverlay({ isOpen, onClose }: FishOverlayProps) {
         }
 
         setFishes(newFishes);
+        currentFishesRef.current = newFishes;
     }, []);
 
     // Wandering algorithm for fish movement
@@ -161,6 +164,43 @@ export function FishOverlay({ isOpen, onClose }: FishOverlayProps) {
         return newFish;
     }, []);
 
+    // Check for fish-pellet collisions and handle eating
+    const handleFishEating = useCallback((fishes: Fish[], pellets: FishPellet[]): { updatedFishes: Fish[], remainingPellets: FishPellet[] } => {
+        const updatedFishes = [...fishes];
+        const remainingPellets: FishPellet[] = [];
+
+        pellets.forEach(pellet => {
+            let eaten = false;
+
+            updatedFishes.forEach(fish => {
+                if (eaten) return; // Pellet already eaten
+
+                // Calculate distance between fish center and pellet
+                const fishCenterX = fish.x + fish.size / 2;
+                const fishCenterY = fish.y + (fish.size * 0.6) / 2; // Fish height is 60% of width
+                const distance = Math.sqrt(
+                    Math.pow(fishCenterX - pellet.x, 2) +
+                    Math.pow(fishCenterY - pellet.y, 2)
+                );
+
+                // If pellet is within fish's "eating range" (fish size * 0.8)
+                const eatingRange = fish.size * 0.5;
+                if (distance < eatingRange) {
+                    // Fish eats the pellet
+                    fish.size += 4; // Increase fish size
+                    eaten = true;
+                }
+            });
+
+            // Only keep pellets that weren't eaten
+            if (!eaten) {
+                remainingPellets.push(pellet);
+            }
+        });
+
+        return { updatedFishes, remainingPellets };
+    }, []);
+
     // Update pellet positions with physics
     const updatePelletPosition = useCallback((pellet: FishPellet, containerWidth: number, containerHeight: number): FishPellet | null => {
         const newPellet = { ...pellet };
@@ -195,20 +235,27 @@ export function FishOverlay({ isOpen, onClose }: FishOverlayProps) {
 
         const container = containerRef.current;
 
-        setFishes(prevFishes =>
-            prevFishes.map(fish => updateFishPosition(fish, container.clientWidth, container.clientHeight))
+        // Update fish positions
+        const updatedFishes = currentFishesRef.current.map(fish =>
+            updateFishPosition(fish, container.clientWidth, container.clientHeight)
         );
 
-        // Update pellets and remove expired ones
-        setPellets(prevPellets => {
-            const updatedPellets = prevPellets
-                .map(pellet => updatePelletPosition(pellet, container.clientWidth, container.clientHeight))
-                .filter((pellet): pellet is FishPellet => pellet !== null);
-            return updatedPellets;
-        });
+        // Check for fish eating pellets
+        const { updatedFishes: finalFishes, remainingPellets } = handleFishEating(updatedFishes, currentPelletsRef.current);
+
+        // Update remaining pellets and remove expired ones
+        const finalPellets = remainingPellets
+            .map(pellet => updatePelletPosition(pellet, container.clientWidth, container.clientHeight))
+            .filter((pellet): pellet is FishPellet => pellet !== null);
+
+        // Update states
+        setFishes(finalFishes);
+        setPellets(finalPellets);
+        currentFishesRef.current = finalFishes;
+        currentPelletsRef.current = finalPellets;
 
         animationRef.current = requestAnimationFrame(animate);
-    }, [updateFishPosition, updatePelletPosition]);
+    }, [updateFishPosition, updatePelletPosition, handleFishEating]);
 
     // Handle overlay click (click-through) - don't close on transparent area clicks
     const handleOverlayClick = (e: React.MouseEvent) => {
@@ -226,12 +273,16 @@ export function FishOverlay({ isOpen, onClose }: FishOverlayProps) {
                     x: x,
                     y: y,
                     vx: (Math.random() - 0.5) * 1, // Small horizontal drift
-                    vy: 0.5 + Math.random() * 0.6, // Falling speed
+                    vy: 0.4 + Math.random() * 0.6, // Falling speed
                     opacity: 1,
                     createdAt: Date.now()
                 };
 
-                setPellets(prevPellets => [...prevPellets, newPellet]);
+                setPellets(prevPellets => {
+                    const updatedPellets = [...prevPellets, newPellet];
+                    currentPelletsRef.current = updatedPellets;
+                    return updatedPellets;
+                });
             }
             return;
         }
@@ -275,6 +326,7 @@ export function FishOverlay({ isOpen, onClose }: FishOverlayProps) {
         if (!isOpen) {
             setIsFeedModeActive(false);
             setPellets([]); // Clear all pellets when overlay closes
+            currentPelletsRef.current = [];
         }
     }, [isOpen]);
 
