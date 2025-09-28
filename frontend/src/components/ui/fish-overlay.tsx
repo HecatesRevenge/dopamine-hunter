@@ -86,14 +86,58 @@ export function FishOverlay({ isOpen, onClose }: FishOverlayProps) {
     }, []);
 
     // Wandering algorithm for fish movement
-    const updateFishPosition = useCallback((fish: Fish, containerWidth: number, containerHeight: number): Fish => {
+    const updateFishPosition = useCallback((fish: Fish, containerWidth: number, containerHeight: number, pellets: FishPellet[]): Fish => {
         const newFish = { ...fish };
+
+        // Check for nearby pellets and target them
+        let hasTargetPellet = false;
+        let closestPellet: FishPellet | null = null;
+        let closestDistance = Infinity;
+
+        pellets.forEach(pellet => {
+            // Calculate fish center position
+            const fishCenterX = newFish.x + newFish.size / 2;
+            const fishCenterY = newFish.y + (newFish.size * 0.6) / 2; // Fish height is 60% of width
+
+            const distance = Math.sqrt(
+                Math.pow(fishCenterX - pellet.x, 2) +
+                Math.pow(fishCenterY - pellet.y, 2)
+            );
+
+            // If pellet is within detection range (fish size * 2)
+            const detectionRange = newFish.size * 3;
+            if (distance < detectionRange && distance < closestDistance) {
+                closestPellet = pellet;
+                closestDistance = distance;
+                hasTargetPellet = true;
+            }
+        });
+
+        // If we found a nearby pellet, target a position below it
+        if (hasTargetPellet && closestPellet) {
+            // Set target to a constant 10 pixels below the pellet's current position
+            newFish.targetX = closestPellet.x;
+            newFish.targetY = closestPellet.y;
+
+            // Calculate direction from fish center to target
+            const fishCenterX = newFish.x + newFish.size / 2;
+            const fishCenterY = newFish.y + (newFish.size * 0.6) / 2;
+            const desiredDirection = Math.atan2(newFish.targetY - fishCenterY, newFish.targetX - fishCenterX);
+
+            // Calculate the shortest angle difference
+            let directionDiff = desiredDirection - newFish.targetDirection;
+            while (directionDiff > Math.PI) directionDiff -= 2 * Math.PI;
+            while (directionDiff < -Math.PI) directionDiff += 2 * Math.PI;
+
+            // Make a more immediate turn when targeting pellets (but not instant)
+            newFish.targetDirection += directionDiff * 0.3; // Faster turn when targeting
+        }
 
         // Update wander timer
         newFish.wanderTimer -= 1;
 
-        // Change direction when wander timer expires
-        if (newFish.wanderTimer <= 0) {
+        // Change direction when wander timer expires (only if not targeting a pellet)
+        if (newFish.wanderTimer <= 0 && !hasTargetPellet) {
             // Select a new target near the old target
             const wanderRadius = 150;
             const angle = Math.random() * Math.PI * 2;
@@ -115,20 +159,23 @@ export function FishOverlay({ isOpen, onClose }: FishOverlayProps) {
         const distance = Math.sqrt(dx * dx + dy * dy);
 
         if (distance > 5) {
-            // Smoothly interpolate towards target direction
-            const desiredDirection = Math.atan2(dy, dx);
-            const directionDiff = desiredDirection - newFish.targetDirection;
+            // Only do smooth interpolation if not actively targeting a pellet
+            if (!hasTargetPellet) {
+                // Smoothly interpolate towards target direction
+                const desiredDirection = Math.atan2(dy, dx);
+                const directionDiff = desiredDirection - newFish.targetDirection;
 
-            // Normalize angle difference to [-π, π]
-            let normalizedDiff = directionDiff;
-            while (normalizedDiff > Math.PI) normalizedDiff -= 2 * Math.PI;
-            while (normalizedDiff < -Math.PI) normalizedDiff += 2 * Math.PI;
+                // Normalize angle difference to [-π, π]
+                let normalizedDiff = directionDiff;
+                while (normalizedDiff > Math.PI) normalizedDiff -= 2 * Math.PI;
+                while (normalizedDiff < -Math.PI) normalizedDiff += 2 * Math.PI;
 
-            // Smoothly update target direction
-            newFish.targetDirection += normalizedDiff * 0.008;
+                // Smoothly update target direction
+                newFish.targetDirection += normalizedDiff * 0.008;
+            }
 
             // Calculate velocity based on target direction
-            const speed = 0.3 + Math.random() * 0.2;
+            const speed = 0.8 + Math.random() * 0.2;
             newFish.vx = Math.cos(newFish.targetDirection) * speed;
             newFish.vy = Math.sin(newFish.targetDirection) * speed;
         } else {
@@ -211,11 +258,11 @@ export function FishOverlay({ isOpen, onClose }: FishOverlayProps) {
 
         // Fade out over time (wait 3 seconds before starting to fade)
         const age = Date.now() - newPellet.createdAt;
-        const fadeStartTime = 3000; // Wait 3 seconds before fading
+        const fadeStartTime = 5000; // Wait 5 seconds before fading
         const fadeDuration = 2000; // Fade over 2 seconds after the wait
 
         if (age < fadeStartTime) {
-            newPellet.opacity = 1; // Keep full opacity for first 3 seconds
+            newPellet.opacity = 1;
         } else {
             const fadeProgress = (age - fadeStartTime) / fadeDuration;
             newPellet.opacity = Math.max(0, 1 - fadeProgress);
@@ -237,7 +284,7 @@ export function FishOverlay({ isOpen, onClose }: FishOverlayProps) {
 
         // Update fish positions
         const updatedFishes = currentFishesRef.current.map(fish =>
-            updateFishPosition(fish, container.clientWidth, container.clientHeight)
+            updateFishPosition(fish, container.clientWidth, container.clientHeight, currentPelletsRef.current)
         );
 
         // Check for fish eating pellets
