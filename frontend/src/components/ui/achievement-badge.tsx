@@ -2,6 +2,24 @@ import { cn } from "@/lib/utils";
 import { Star, Trophy, Target, Zap, Award } from "lucide-react";
 import { ReactNode } from "react";
 
+// Import all achievement icons
+import lightningIcon from "@/assets/icons/lightning.png";
+import starIcon from "@/assets/icons/star.png";
+import trophyIcon from "@/assets/icons/trophy.png";
+import targetIcon from "@/assets/icons/target.png";
+import focustimeIcon from "@/assets/icons/focustime.png";
+import cleaningIcon from "@/assets/icons/cleaning.png";
+import selfCareIcon from "@/assets/icons/self-care.png";
+import studyingIcon from "@/assets/icons/studying.png";
+import totalStreakIcon from "@/assets/icons/total-streak.png";
+import algaeIcon from "@/assets/icons/algae.png";
+import crabIcon from "@/assets/icons/crab.png";
+import sharkIcon from "@/assets/icons/shark.png";
+import seaturtleIcon from "@/assets/icons/seaturtle.png";
+import snail2Icon from "@/assets/icons/snail2.png";
+import anglerIcon from "@/assets/icons/angler.png";
+import pufferIcon from "@/assets/icons/puffer.png";
+
 interface AchievementBadgeProps {
   icon?: "star" | "trophy" | "target" | "zap" | "award" | "first-task" | "silver" | "gold" | "bronze" | "cleaning" | "self-care" | "studying" | "total-streak" | "algae" | "crab" | "shark" | "seaturtle" | "snail2" | "angler" | "puffer";
   title: string;
@@ -21,28 +39,28 @@ const iconMap = {
   award: Award,
 };
 
-// Custom image icons from icons directory
+// Custom image icons mapped to imported assets
 const customIconMap = {
-  "first-task": "/icons/lightning.png",
-  "gold": "/icons/gold.png",
-  "silver": "/icons/silver.png",
-  "bronze": "/icons/bronze.png",
-  "star": "/icons/star.png",
-  "trophy": "/icons/trophy.png",
-  "target": "/icons/target.png",
-  "zap": "/icons/lightning.png",
-  "award": "/icons/Ba focustime.png",
-  "cleaning": "/icons/cleaning.png",
-  "self-care": "/icons/self-care.png",
-  "studying": "/icons/studying.png",
-  "total-streak": "/icons/total-streak.png",
-  "algae": "/icons/algae.png",
-  "crab": "/icons/crab.png",
-  "shark": "/icons/shark.png",
-  "seaturtle": "/icons/seaturtle.png",
-  "snail2": "/icons/snail2.png",
-  "angler": "/icons/angler.png",
-  "puffer": "/icons/puffer.png",
+  "first-task": lightningIcon,
+  "gold": trophyIcon,
+  "silver": starIcon,
+  "bronze": targetIcon,
+  "star": starIcon,
+  "trophy": trophyIcon,
+  "target": targetIcon,
+  "zap": lightningIcon,
+  "award": focustimeIcon,
+  "cleaning": cleaningIcon,
+  "self-care": selfCareIcon,
+  "studying": studyingIcon,
+  "total-streak": totalStreakIcon,
+  "algae": algaeIcon,
+  "crab": crabIcon,
+  "shark": sharkIcon,
+  "seaturtle": seaturtleIcon,
+  "snail2": snail2Icon,
+  "angler": anglerIcon,
+  "puffer": pufferIcon,
 };
 
 const sizeClasses = {

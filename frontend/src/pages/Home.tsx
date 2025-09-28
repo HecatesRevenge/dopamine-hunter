@@ -26,6 +26,9 @@ import {
   ChevronRight
 } from "lucide-react";
 
+// Import background image
+import seaBackground from "@/assets/images/seabackground.png";
+
 const Home = () => {
   const [currentPage, setCurrentPage] = useState("home");
   const [streakData, setStreakData] = useState({
@@ -134,7 +137,7 @@ const Home = () => {
     <div
       className="min-h-screen text-foreground relative flex flex-col"
       style={{
-        backgroundImage: 'url(/placeholders/seabackground.png)',
+        backgroundImage: `url(${seaBackground})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',

@@ -21,6 +21,9 @@ import {
 import { cn } from "@/lib/utils";
 import { useNavigate } from "react-router-dom";
 
+// Import background image
+import seaBackground from "@/assets/images/seabackground.png";
+
 interface Achievement {
   id: string;
   title: string;
@@ -100,7 +103,7 @@ const Achievements: React.FC = () => {
     <div
       className="min-h-screen text-foreground relative flex flex-col"
       style={{
-        backgroundImage: 'url(/placeholders/seabackground.png)',
+        backgroundImage: `url(${seaBackground})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
