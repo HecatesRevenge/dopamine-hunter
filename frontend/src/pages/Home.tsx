@@ -116,7 +116,7 @@ const Home = () => {
 
   const inProgressTasks = [
     { title: "Self Care", progress: 75, color: "success" as const },
-    { title: "Study Session", progress: 45, color: "primary" as const },
+    { title: "Studying", progress: 45, color: "primary" as const },
     { title: "Cleaning Path", progress: 90, color: "accent" as const },
     {
       title: "Total Streak",

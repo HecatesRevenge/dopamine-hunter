@@ -23,7 +23,8 @@ interface TaskNode {
   id: string;
   title: string;
   description: string;
-  icon: React.ElementType;
+  icon?: React.ElementType;
+  customIcon?: string;
   status: "completed" | "available" | "locked";
   position: { x: number; y: number };
   prerequisites?: string[];
@@ -31,22 +32,59 @@ interface TaskNode {
 }
 
 const taskNodes: TaskNode[] = [
-  // Foundation tier
-  { id: "start", title: "Getting Started", description: "Welcome to TaskQuest", icon: Target, status: "completed", position: { x: 50, y: 90 } },
-  { id: "basics", title: "Learn Basics", description: "Master the fundamentals", icon: BookOpen, status: "completed", position: { x: 20, y: 70 }, prerequisites: ["start"] },
-  { id: "first-goal", title: "Set First Goal", description: "Define your objective", icon: Star, status: "available", position: { x: 80, y: 70 }, prerequisites: ["start"] },
-  
-  // Skill development tier
-  { id: "time-mgmt", title: "Time Management", description: "Learn to organize your time", icon: Clock, status: "available", position: { x: 15, y: 50 }, prerequisites: ["basics"] },
-  { id: "focus-skills", title: "Focus Training", description: "Improve concentration", icon: Zap, status: "locked", position: { x: 50, y: 50 }, prerequisites: ["basics", "first-goal"] },
-  { id: "productivity", title: "Productivity Boost", description: "Enhance your workflow", icon: Settings, status: "locked", position: { x: 85, y: 50 }, prerequisites: ["first-goal"] },
-  
-  // Advanced tier
-  { id: "teamwork", title: "Collaboration", description: "Work effectively with others", icon: Users, status: "locked", position: { x: 25, y: 30 }, prerequisites: ["time-mgmt", "focus-skills"] },
-  { id: "mastery", title: "Skill Mastery", description: "Achieve expertise level", icon: Trophy, status: "locked", position: { x: 70, y: 30 }, prerequisites: ["focus-skills", "productivity"] },
-  
-  // Expert tier
-  { id: "leadership", title: "Leadership", description: "Guide and inspire others", icon: Star, status: "locked", position: { x: 50, y: 10 }, prerequisites: ["teamwork", "mastery"] }
+  // SELF CARE TREE (Left side - 20-30% x range)
+  // Base
+  { id: "self-care-base", title: "Self Care Basics", description: "Master daily self-care routines and build healthy habits", customIcon: "/placeholders/Fp_basics.webp", status: "completed", position: { x: 20, y: 85 } },
+  // Tier 1
+  { id: "morning-routine", title: "Morning Routine", description: "Establish a consistent morning routine to start your day right", customIcon: "/placeholders/achievements/bronze_32x32.png", status: "completed", position: { x: 15, y: 70 }, prerequisites: ["self-care-base"] },
+  { id: "self-hygiene", title: "Hygiene Habits", description: "Build consistent personal hygiene routines", customIcon: "/placeholders/achievements/silver_1_32x32.png", status: "available", position: { x: 25, y: 70 }, prerequisites: ["self-care-base"] },
+  // Tier 2
+  { id: "exercise", title: "Exercise Routine", description: "Develop a sustainable fitness habit", customIcon: "/placeholders/achievements/gold_1_32x32.png", status: "locked", position: { x: 12, y: 55 }, prerequisites: ["morning-routine"] },
+  { id: "nutrition", title: "Healthy Eating", description: "Create balanced meal planning and eating habits", customIcon: "/placeholders/achievements/bronze_32x32.png", status: "locked", position: { x: 20, y: 55 }, prerequisites: ["morning-routine", "self-hygiene"] },
+  { id: "sleep-hygiene", title: "Sleep Mastery", description: "Optimize sleep schedule and bedtime routines", customIcon: "/placeholders/achievements/silver_1_32x32.png", status: "locked", position: { x: 28, y: 55 }, prerequisites: ["self-hygiene"] },
+  // Tier 3
+  { id: "mindfulness", title: "Mindfulness", description: "Develop meditation and stress management skills", customIcon: "/placeholders/achievements/gold_1_32x32.png", status: "locked", position: { x: 20, y: 40 }, prerequisites: ["exercise", "nutrition", "sleep-hygiene"] },
+  // Tier 4
+  { id: "wellness-master", title: "Wellness Master", description: "Achieve holistic health and well-being", customIcon: "/placeholders/achievements/silver_1_32x32.png", status: "locked", position: { x: 20, y: 25 }, prerequisites: ["mindfulness"] },
+  // Tier 5
+  { id: "life-coach", title: "Life Coach", description: "Help others develop their wellness journey", customIcon: "/placeholders/achievements/gold_1_32x32.png", status: "locked", position: { x: 15, y: 10 }, prerequisites: ["wellness-master"] },
+  { id: "wellness-influencer", title: "Wellness Influencer", description: "Inspire communities to live healthier lives", customIcon: "/placeholders/achievements/bronze_32x32.png", status: "locked", position: { x: 25, y: 10 }, prerequisites: ["wellness-master"] },
+
+  // CHORES TREE (Center - 45-55% x range)
+  // Base
+  { id: "chores-base", title: "Basic Chores", description: "Master fundamental household maintenance tasks", customIcon: "/placeholders/achievements/bronze_32x32.png", status: "available", position: { x: 50, y: 85 } },
+  // Tier 1
+  { id: "cleaning-basics", title: "Cleaning Basics", description: "Learn efficient cleaning techniques and routines", customIcon: "/placeholders/achievements/silver_1_32x32.png", status: "locked", position: { x: 45, y: 70 }, prerequisites: ["chores-base"] },
+  { id: "laundry", title: "Laundry Management", description: "Organize washing, drying, and clothing care", customIcon: "/placeholders/achievements/gold_1_32x32.png", status: "locked", position: { x: 55, y: 70 }, prerequisites: ["chores-base"] },
+  // Tier 2
+  { id: "organization", title: "Home Organization", description: "Create and maintain organized living spaces", customIcon: "/placeholders/achievements/bronze_32x32.png", status: "locked", position: { x: 42, y: 55 }, prerequisites: ["cleaning-basics"] },
+  { id: "maintenance", title: "Home Maintenance", description: "Handle basic repairs and upkeep tasks", customIcon: "/placeholders/achievements/silver_1_32x32.png", status: "locked", position: { x: 50, y: 55 }, prerequisites: ["cleaning-basics", "laundry"] },
+  { id: "cooking", title: "Cooking Skills", description: "Develop meal preparation and kitchen management", customIcon: "/placeholders/achievements/gold_1_32x32.png", status: "locked", position: { x: 58, y: 55 }, prerequisites: ["laundry"] },
+  // Tier 3
+  { id: "home-systems", title: "Home Systems", description: "Create efficient household management systems", customIcon: "/placeholders/achievements/bronze_32x32.png", status: "locked", position: { x: 50, y: 40 }, prerequisites: ["organization", "maintenance", "cooking"] },
+  // Tier 4
+  { id: "home-master", title: "Home Master", description: "Achieve complete household management mastery", customIcon: "/placeholders/achievements/silver_1_32x32.png", status: "locked", position: { x: 50, y: 25 }, prerequisites: ["home-systems"] },
+  // Tier 5
+  { id: "home-designer", title: "Home Designer", description: "Create beautiful and functional living spaces", customIcon: "/placeholders/achievements/gold_1_32x32.png", status: "locked", position: { x: 45, y: 10 }, prerequisites: ["home-master"] },
+  { id: "household-guru", title: "Household Guru", description: "Become an expert who can optimize any living space", customIcon: "/placeholders/achievements/bronze_32x32.png", status: "locked", position: { x: 55, y: 10 }, prerequisites: ["home-master"] },
+
+  // STUDYING TREE (Right side - 70-80% x range)
+  // Base
+  { id: "study-base", title: "Study Basics", description: "Learn fundamental study techniques and habits", customIcon: "/placeholders/achievements/bronze_32x32.png", status: "locked", position: { x: 80, y: 85 } },
+  // Tier 1
+  { id: "note-taking", title: "Note Taking", description: "Master effective note-taking strategies", customIcon: "/placeholders/achievements/silver_1_32x32.png", status: "locked", position: { x: 75, y: 70 }, prerequisites: ["study-base"] },
+  { id: "focus-skills", title: "Focus Training", description: "Develop concentration and attention skills", customIcon: "/placeholders/achievements/gold_1_32x32.png", status: "locked", position: { x: 85, y: 70 }, prerequisites: ["study-base"] },
+  // Tier 2
+  { id: "time-management", title: "Time Management", description: "Learn to organize study time effectively", customIcon: "/placeholders/achievements/bronze_32x32.png", status: "locked", position: { x: 72, y: 55 }, prerequisites: ["note-taking"] },
+  { id: "research-skills", title: "Research Skills", description: "Develop information gathering and analysis abilities", customIcon: "/placeholders/achievements/silver_1_32x32.png", status: "locked", position: { x: 80, y: 55 }, prerequisites: ["note-taking", "focus-skills"] },
+  { id: "memory-techniques", title: "Memory Techniques", description: "Master memorization and retention strategies", customIcon: "/placeholders/achievements/gold_1_32x32.png", status: "locked", position: { x: 88, y: 55 }, prerequisites: ["focus-skills"] },
+  // Tier 3
+  { id: "advanced-study", title: "Advanced Study", description: "Integrate all study skills for maximum learning", customIcon: "/placeholders/achievements/bronze_32x32.png", status: "locked", position: { x: 80, y: 40 }, prerequisites: ["time-management", "research-skills", "memory-techniques"] },
+  // Tier 4
+  { id: "study-master", title: "Study Master", description: "Achieve mastery in learning and academic success", customIcon: "/placeholders/achievements/silver_1_32x32.png", status: "locked", position: { x: 80, y: 25 }, prerequisites: ["advanced-study"] },
+  // Tier 5
+  { id: "knowledge-sage", title: "Knowledge Sage", description: "Become a master learner who can tackle any subject", customIcon: "/placeholders/achievements/gold_1_32x32.png", status: "locked", position: { x: 75, y: 10 }, prerequisites: ["study-master"] },
+  { id: "study-mentor", title: "Study Mentor", description: "Guide others in their learning journey", customIcon: "/placeholders/achievements/bronze_32x32.png", status: "locked", position: { x: 85, y: 10 }, prerequisites: ["study-master"] }
 ];
 
 const TaskTree: React.FC = () => {
@@ -156,29 +194,68 @@ const TaskTree: React.FC = () => {
               const StatusIcon = getStatusIcon(task.status);
               const TaskIcon = task.icon;
               const available = isTaskAvailable(task);
-              
+
               return (
-                <Button
+                <div
                   key={task.id}
-                  variant="outline"
-                  className={cn(
-                    "absolute w-16 h-16 p-0 rounded-xl transition-all duration-300 hover:scale-110",
-                    getNodeColor(available ? task.status : "locked"),
-                    !available && "opacity-50 cursor-not-allowed"
-                  )}
+                  className="absolute group"
                   style={{
                     left: `${task.position.x}%`,
                     top: `${task.position.y}%`,
                     transform: "translate(-50%, -50%)"
                   }}
-                  onClick={() => available && setSelectedTask(task)}
-                  disabled={!available}
                 >
-                  <div className="relative">
-                    <TaskIcon className="w-6 h-6" />
-                    <StatusIcon className="w-3 h-3 absolute -top-1 -right-1" />
+                  {/* Achievement Badge Style Node */}
+                  <Button
+                    variant="outline"
+                    className={cn(
+                      "w-16 h-16 p-0 rounded-full transition-all duration-300 hover:scale-110 relative overflow-hidden",
+                      "bg-ocean border-ocean",
+                      available && task.status === "completed" && "shadow-glow",
+                      !available && "opacity-50 cursor-not-allowed"
+                    )}
+                    onClick={() => available && setSelectedTask(task)}
+                    disabled={!available}
+                  >
+                    {/* Greyed-out overlay for locked tasks */}
+                    {(!available || task.status === "locked") && (
+                      <>
+                        <div className="absolute inset-0 bg-black/50 rounded-full mix-blend-multiply z-10" />
+                        <div className="absolute inset-0 bg-gray-500/40 rounded-full mix-blend-overlay z-10" />
+                      </>
+                    )}
+
+                    {/* Task Icon */}
+                    {task.customIcon ? (
+                      <img
+                        src={task.customIcon}
+                        alt={task.title}
+                        className="w-8 h-8 relative z-0"
+                        style={{ imageRendering: 'pixelated' }}
+                      />
+                    ) : (
+                      TaskIcon && <TaskIcon className="w-8 h-8 relative z-0 text-white" />
+                    )}
+
+                    {/* Status indicator */}
+                    <StatusIcon className="w-3 h-3 absolute -top-1 -right-1 text-white z-20" />
+                  </Button>
+
+                  {/* Hover Tooltip */}
+                  <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none z-50">
+                    <div className="bg-card-overlay backdrop-blur-md rounded-lg p-3 shadow-lg border border-white/20 max-w-xs">
+                      <h4 className="font-semibold text-sm mb-1">{task.title}</h4>
+                      <p className="text-xs text-muted-foreground">{task.description}</p>
+                      {(!available || task.status === "locked") && (
+                        <p className="text-xs text-muted-foreground/70 mt-1 italic">
+                          Complete prerequisites to unlock!
+                        </p>
+                      )}
+                    </div>
+                    {/* Tooltip Arrow */}
+                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-b-4 border-transparent border-b-card-overlay"></div>
                   </div>
-                </Button>
+                </div>
               );
             })}
           </div>
@@ -188,10 +265,27 @@ const TaskTree: React.FC = () => {
             <Card className="mt-6 p-6 glass-card">
               <div className="flex items-start gap-4">
                 <div className={cn(
-                  "w-16 h-16 rounded-xl flex items-center justify-center",
-                  getNodeColor(selectedTask.status)
+                  "w-16 h-16 rounded-full flex items-center justify-center relative overflow-hidden",
+                  "bg-ocean border-ocean"
                 )}>
-                  <selectedTask.icon className="w-8 h-8" />
+                  {/* Greyed-out overlay for locked tasks */}
+                  {selectedTask.status === "locked" && (
+                    <>
+                      <div className="absolute inset-0 bg-black/50 rounded-full mix-blend-multiply z-10" />
+                      <div className="absolute inset-0 bg-gray-500/40 rounded-full mix-blend-overlay z-10" />
+                    </>
+                  )}
+
+                  {selectedTask.customIcon ? (
+                    <img
+                      src={selectedTask.customIcon}
+                      alt={selectedTask.title}
+                      className="w-10 h-10 relative z-0"
+                      style={{ imageRendering: 'pixelated' }}
+                    />
+                  ) : (
+                    selectedTask.icon && <selectedTask.icon className="w-10 h-10 relative z-0 text-white" />
+                  )}
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-2">
