@@ -24,6 +24,7 @@ interface NavigationProps {
 export function Navigation({ currentPage = "home", onNavigate }: NavigationProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isDark, setIsDark] = useState(true);
+  const [isHidden, setIsHidden] = useState(false);
 
   useEffect(() => {
     // Default to dark theme, only switch to light if explicitly saved
@@ -40,6 +41,19 @@ export function Navigation({ currentPage = "home", onNavigate }: NavigationProps
         localStorage.setItem("theme", "dark");
       }
     }
+  }, []);
+
+  useEffect(() => {
+    // Handle scroll to hide navigation when crossing in-progress box
+    const handleScroll = () => {
+      const scrollY = window.scrollY;
+      // Hide navigation when scrolled past the welcome section (around 120px)
+      // This is approximately when the nav would start overlapping the in-progress box
+      setIsHidden(scrollY > 120);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const handleNavigate = (pageId: string) => {
@@ -61,7 +75,9 @@ export function Navigation({ currentPage = "home", onNavigate }: NavigationProps
   };
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-50 glass-card m-4 p-4">
+    <div className={`fixed top-0 left-0 right-0 z-50 glass-card m-4 p-4 transition-transform duration-300 ${
+      isHidden ? '-translate-y-full' : 'translate-y-0'
+    }`}>
       <div className="flex items-center justify-between">
         {/* Logo, Menu & Title */}
         <div className="flex items-center gap-3">
