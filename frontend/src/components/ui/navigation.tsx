@@ -94,14 +94,16 @@ export function Navigation({ currentPage = "home", onNavigate }: NavigationProps
     }`}>
       <div className="flex items-center justify-between">
         {/* Logo, Menu & Title */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-4">
           <img
             src={goldfishLogo}
             alt="Goldfish Logo"
-            className="w-12 h-12 animate-float cursor-pointer transition-transform hover:scale-110"
+            className="w-16 h-16 animate-float cursor-pointer transition-transform hover:scale-110"
             onClick={() => handleNavigate("minigame")}
           />
-          
+
+          <QuickAccessDrawer />
+
           {/* Mobile Menu Button (moved here) */}
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger asChild>
@@ -131,11 +133,13 @@ export function Navigation({ currentPage = "home", onNavigate }: NavigationProps
             </div>
           </SheetContent>
         </Sheet>
-          
-          <h1 className="text-xl font-poppins font-bold bg-ocean bg-clip-text text-transparent">
+
+          <h1
+            className="text-2xl font-poppins font-bold bg-ocean bg-clip-text text-transparent cursor-pointer hover:scale-105 transition-transform px-4"
+            onClick={() => handleNavigate("home")}
+          >
             TaskQuest
           </h1>
-          <QuickAccessDrawer />
         </div>
 
         {/* Desktop Hamburger Menu & Profile */}

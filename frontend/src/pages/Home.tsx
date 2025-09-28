@@ -131,10 +131,24 @@ const Home = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <Navigation currentPage={currentPage} onNavigate={setCurrentPage} />
+    <div
+      className="min-h-screen text-foreground relative flex flex-col"
+      style={{
+        backgroundImage: 'url(/placeholders/seabackground.png)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        backgroundAttachment: 'fixed'
+      }}
+    >
+      {/* Dark theme overlay for proper brightness */}
+      <div className="absolute inset-0 bg-black/57 dark:bg-black/67"></div>
 
-      <main className="pt-24 px-4 pb-8">
+      {/* Content wrapper */}
+      <div className="relative z-10 flex flex-col min-h-screen">
+        <Navigation currentPage={currentPage} onNavigate={setCurrentPage} />
+
+        <main className="pt-24 px-4 pb-8 flex-1">
         <div className="max-w-7xl mx-auto">
           {/* Welcome Section - keeping padding structure */}
           <div className="mb-8"></div>
@@ -297,6 +311,7 @@ const Home = () => {
         </div>
         <Footer onNavigate={setCurrentPage} />
       </main>
+      </div>
     </div>
   );
 };
