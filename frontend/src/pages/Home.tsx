@@ -213,7 +213,7 @@ const Home = ({ onGoldfishClick }: HomeProps) => {
 
                   {/* Scrollable Achievement Grid */}
                   <div className="flex-1 overflow-y-auto">
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="grid grid-cols-2 gap-5 px-3">
                       {/* First Row */}
                       <AchievementBadge
                         icon="first-task"

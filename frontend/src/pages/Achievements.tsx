@@ -220,12 +220,12 @@ const Achievements: React.FC = () => {
                 <div className="grid gap-4">
                   {filteredAchievements.map(achievement => (
                     <Card key={achievement.id} className={cn(
-                      "glass-card p-4 transition-all hover:shadow-lg",
+                      "glass-card p-4 transition-all hover:shadow-lg hover:z-[100] relative",
                       achievement.isUnlocked ? "border-primary/30" : "border-muted/30"
                     )}>
                       <div className="flex items-start gap-4">
                         {/* Achievement Icon */}
-                        <div className="relative">
+                        <div className="relative z-10">
                           <AchievementBadge
                             icon={achievement.icon}
                             title={achievement.title}

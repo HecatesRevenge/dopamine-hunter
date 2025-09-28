@@ -226,11 +226,6 @@ export function CalendarWidget({ className }: CalendarWidgetProps) {
             <div className="font-semibold">
               {day.getDate()}
             </div>
-            {!isExpanded && (
-              <div className="text-xs opacity-60 mt-1">
-                Click for details
-              </div>
-            )}
           </button>
         ))}
 

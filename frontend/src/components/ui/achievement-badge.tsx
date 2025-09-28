@@ -98,7 +98,7 @@ export function AchievementBadge({
   return (
     <div
       className={cn(
-        "group relative cursor-pointer transition-all duration-300",
+        "group relative cursor-pointer transition-all duration-300 hover:z-[200]",
         className
       )}
       onClick={onClick}
@@ -148,7 +148,7 @@ export function AchievementBadge({
       </div>
 
       {/* Tooltip */}
-      <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none z-50">
+      <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none z-[9999]">
         <div className="bg-card-overlay backdrop-blur-md rounded-lg p-3 shadow-lg border border-white/20 max-w-xs">
           <h4 className="font-semibold text-sm mb-1">{title}</h4>
           {description && (
