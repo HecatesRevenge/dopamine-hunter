@@ -84,6 +84,9 @@ export function Navigation({ currentPage = "home", onNavigate }: NavigationProps
     } else if (pageId === "home") {
       // Navigate to home route
       navigate("/");
+    } else if (pageId === "minigame") {
+      // Use React Router navigation for minigame
+      navigate("/minigame");
     } else {
       // Use the existing onNavigate prop for other pages
       onNavigate?.(pageId);
@@ -101,8 +104,7 @@ export function Navigation({ currentPage = "home", onNavigate }: NavigationProps
           <img
             src={goldfishLogo}
             alt="Goldfish Logo"
-            className="w-16 h-16 animate-float cursor-pointer transition-transform hover:scale-110"
-            onClick={() => handleNavigate("minigame")}
+            className="w-16 h-16 animate-float"
           />
 
           <QuickAccessDrawer />
@@ -110,8 +112,8 @@ export function Navigation({ currentPage = "home", onNavigate }: NavigationProps
           {/* Mobile Menu Button (moved here) */}
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="md:hidden">
-                <Menu className="w-6 h-6" />
+              <Button variant="ghost" className="w-16 h-16 flex items-center justify-center md:hidden bg-muted/40 border border-border/50 hover:bg-muted/60">
+                <Menu className="w-12 h-12" />
               </Button>
             </SheetTrigger>
             <SheetContent side="right" className="w-80 bg-background/95 backdrop-blur-md">
@@ -149,8 +151,8 @@ export function Navigation({ currentPage = "home", onNavigate }: NavigationProps
         <div className="hidden md:flex items-center gap-2">
           <Sheet>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon">
-                <Menu className="w-6 h-6" />
+              <Button variant="ghost" className="w-16 h-16 flex items-center justify-center bg-muted/40 border border-border/50 hover:bg-muted/60">
+                <Menu className="w-12 h-12" />
               </Button>
             </SheetTrigger>
             <SheetContent side="right" className="w-80 bg-background/95 backdrop-blur-md">
@@ -178,11 +180,10 @@ export function Navigation({ currentPage = "home", onNavigate }: NavigationProps
           
           <Button
             variant="ghost"
-            size="icon"
-            className="w-12 h-12 rounded-full bg-muted hover:bg-muted/80"
+            className="w-16 h-16 rounded-full bg-muted hover:bg-muted/80 flex items-center justify-center"
             onClick={() => handleNavigate("profile")}
           >
-            <User className="w-6 h-6" />
+            <User className="w-8 h-8" />
           </Button>
         </div>
       </div>
