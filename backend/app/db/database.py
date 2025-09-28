@@ -1,3 +1,4 @@
+# not used for now
 import json
 import os
 from datetime import datetime
@@ -51,6 +52,7 @@ def get_users() -> list[User]:
     """Get all users from file storage"""
     data = _load_json_file(USERS_FILE)
     return [_dict_to_user(item) for item in data]
+
 
 def create_user(user: User) -> User:
     """Create a new user and save to file"""
@@ -159,3 +161,4 @@ def update_achievement(achievement_id: int, achievement_update: Achievement) -> 
             _save_json_file(ACHIEVEMENTS_FILE, [_model_to_dict(a) for a in achievements])
             return achievement_update
     return None
+
