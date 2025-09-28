@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 import pytest
 import backend.app.db.database as db
 from backend.app.models import User
+from backend.app.services.user_service import UserService
 
 
 @pytest.fixture(autouse=True)
@@ -44,14 +45,14 @@ def test_streak_visit_flow():
     user_id = created.id
 
     # First visit
-    data1 = db.record_streak_visit(user_id)
+    data1 = UserService.record_streak_visit(user_id)
     assert data1 is not None
     assert data1["totalVisits"] == 1
     assert data1["currentDailyStreak"] == 1
     assert data1["bestStreak"] == 1
 
     # Same day visit -> only totalVisits increments
-    data2 = db.record_streak_visit(user_id)
+    data2 = UserService.record_streak_visit(user_id)
     assert data2["totalVisits"] == 2
     assert data2["currentDailyStreak"] == 1
     assert data2["bestStreak"] == 1
@@ -62,7 +63,7 @@ def test_streak_visit_flow():
     users[0]["last_login"] = (datetime.now() - timedelta(days=1)).isoformat()
     write_users_file(users)
 
-    data3 = db.record_streak_visit(user_id)
+    data3 = UserService.record_streak_visit(user_id)
     assert data3["totalVisits"] == 3
     assert data3["currentDailyStreak"] == 2
     assert data3["bestStreak"] == 2
@@ -72,7 +73,7 @@ def test_streak_visit_flow():
     users[0]["last_login"] = (datetime.now() - timedelta(days=3)).isoformat()
     write_users_file(users)
 
-    data4 = db.record_streak_visit(user_id)
+    data4 = UserService.record_streak_visit(user_id)
     assert data4["totalVisits"] == 4
     assert data4["currentDailyStreak"] == 1
     # bestStreak should remain as previous best (2)

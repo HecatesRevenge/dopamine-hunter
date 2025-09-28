@@ -1,3 +1,4 @@
+# not used for now
 import json
 import os
 from datetime import datetime
@@ -52,70 +53,6 @@ def get_users() -> list[User]:
     data = _load_json_file(USERS_FILE)
     return [_dict_to_user(item) for item in data]
 
-def get_user_by_username(username: str) -> User | None: #pen + ai addition
-    """Get a user by username"""
-    users = get_users()
-    for user in users:
-        if user.username == username:
-            return user
-    return None
-
-def update_user(user_id: int, user_update: User) -> User | None: #pen + ai addition
-    """Update a user"""
-    users = get_users()
-    for i, user in enumerate(users):
-        if user.id == user_id:
-            user_update.id = user_id
-            user_update.created_at = user.created_at
-            users[i] = user_update
-            _save_json_file(USERS_FILE, [_model_to_dict(u) for u in users])
-            return user_update
-    return None
-
-
-def record_streak_visit(user_id: int) -> dict | None:
-    """Record a page visit for streak tracking and return updated stats.
-
-    Returns a dict with keys: totalVisits, currentDailyStreak, bestStreak, lastVisitDate
-    """
-    users = get_users()
-    for i, user in enumerate(users):
-        if user.id == user_id:
-            now = datetime.now()
-            # Determine day delta
-            if user.last_login:
-                delta = now.date() - user.last_login.date()
-                if delta.days == 0:
-                    # same day: only increment total_visits
-                    user.total_visits = (user.total_visits or 0) + 1
-                elif delta.days == 1:
-                    # consecutive day
-                    user.login_streak = (user.login_streak or 0) + 1
-                    user.total_visits = (user.total_visits or 0) + 1
-                else:
-                    # missed day(s)
-                    user.login_streak = 1
-                    user.total_visits = (user.total_visits or 0) + 1
-            else:
-                # first visit ever
-                user.login_streak = 1
-                user.total_visits = (user.total_visits or 0) + 1
-
-            # update best streak
-            if user.login_streak and user.login_streak > (user.best_streak or 0):
-                user.best_streak = user.login_streak
-
-            user.last_login = now
-            users[i] = user
-            _save_json_file(USERS_FILE, [_model_to_dict(u) for u in users])
-
-            return {
-                "totalVisits": user.total_visits,
-                "currentDailyStreak": user.login_streak,
-                "bestStreak": user.best_streak,
-                "lastVisitDate": user.last_login.date().isoformat()
-            }
-    return None
 
 def create_user(user: User) -> User:
     """Create a new user and save to file"""
