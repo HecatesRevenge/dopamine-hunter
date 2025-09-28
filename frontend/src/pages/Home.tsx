@@ -148,7 +148,7 @@ const Home = () => {
       <div className="relative z-10 flex flex-col min-h-screen">
         <Navigation currentPage={currentPage} onNavigate={setCurrentPage} />
 
-        <main className="pt-24 px-4 pb-8 flex-1">
+        <main className="pt-24 px-4 flex-1">
         <div className="max-w-7xl mx-auto">
           {/* Welcome Section - keeping padding structure */}
           <div className="mb-8"></div>

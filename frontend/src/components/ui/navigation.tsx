@@ -78,6 +78,9 @@ export function Navigation({ currentPage = "home", onNavigate }: NavigationProps
     } else if (pageId === "task-tree") {
       // Use React Router navigation for task-tree
       navigate("/task-tree");
+    } else if (pageId === "achievements") {
+      // Use React Router navigation for achievements
+      navigate("/achievements");
     } else if (pageId === "home") {
       // Navigate to home route
       navigate("/");
