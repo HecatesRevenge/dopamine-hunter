@@ -18,6 +18,16 @@ interface Fish {
     targetDirection: number;
 }
 
+interface FishPellet {
+    id: number;
+    x: number;
+    y: number;
+    vx: number;
+    vy: number;
+    opacity: number;
+    createdAt: number;
+}
+
 interface FishOverlayProps {
     isOpen: boolean;
     onClose: () => void;
@@ -37,8 +47,11 @@ const FISH_COLORS = [
 
 export function FishOverlay({ isOpen, onClose }: FishOverlayProps) {
     const [fishes, setFishes] = useState<Fish[]>([]);
+    const [pellets, setPellets] = useState<FishPellet[]>([]);
+    const [isFeedModeActive, setIsFeedModeActive] = useState(false);
     const animationRef = useRef<number>();
     const containerRef = useRef<HTMLDivElement>(null);
+    const pelletIdCounter = useRef<number>(0);
 
     // Initialize fish with random positions and properties
     const initializeFishes = useCallback(() => {
@@ -148,6 +161,34 @@ export function FishOverlay({ isOpen, onClose }: FishOverlayProps) {
         return newFish;
     }, []);
 
+    // Update pellet positions with physics
+    const updatePelletPosition = useCallback((pellet: FishPellet, containerWidth: number, containerHeight: number): FishPellet | null => {
+        const newPellet = { ...pellet };
+
+        // Update position
+        newPellet.x += newPellet.vx;
+        newPellet.y += newPellet.vy;
+
+        // Fade out over time (wait 3 seconds before starting to fade)
+        const age = Date.now() - newPellet.createdAt;
+        const fadeStartTime = 3000; // Wait 3 seconds before fading
+        const fadeDuration = 2000; // Fade over 2 seconds after the wait
+
+        if (age < fadeStartTime) {
+            newPellet.opacity = 1; // Keep full opacity for first 3 seconds
+        } else {
+            const fadeProgress = (age - fadeStartTime) / fadeDuration;
+            newPellet.opacity = Math.max(0, 1 - fadeProgress);
+        }
+
+        // Remove pellets that are off screen or fully faded
+        if (newPellet.y > containerHeight + 50 || newPellet.x < -50 || newPellet.x > containerWidth + 50 || newPellet.opacity <= 0) {
+            return null; // Mark for removal
+        }
+
+        return newPellet;
+    }, []);
+
     // Animation loop
     const animate = useCallback(() => {
         if (!containerRef.current) return;
@@ -158,15 +199,40 @@ export function FishOverlay({ isOpen, onClose }: FishOverlayProps) {
             prevFishes.map(fish => updateFishPosition(fish, container.clientWidth, container.clientHeight))
         );
 
+        // Update pellets and remove expired ones
+        setPellets(prevPellets => {
+            const updatedPellets = prevPellets
+                .map(pellet => updatePelletPosition(pellet, container.clientWidth, container.clientHeight))
+                .filter((pellet): pellet is FishPellet => pellet !== null);
+            return updatedPellets;
+        });
+
         animationRef.current = requestAnimationFrame(animate);
-    }, [updateFishPosition]);
+    }, [updateFishPosition, updatePelletPosition]);
 
     // Handle overlay click (click-through) - don't close on transparent area clicks
     const handleOverlayClick = (e: React.MouseEvent) => {
         // Only close if clicking the close button or pressing escape
         // Transparent area clicks should pass through without closing
         if (e.target === e.currentTarget) {
-            // Do nothing - let clicks pass through
+            // If feed mode is active, create a pellet at click position
+            if (isFeedModeActive && containerRef.current) {
+                const rect = containerRef.current.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+
+                const newPellet: FishPellet = {
+                    id: pelletIdCounter.current++,
+                    x: x,
+                    y: y,
+                    vx: (Math.random() - 0.5) * 1, // Small horizontal drift
+                    vy: 0.5 + Math.random() * 0.6, // Falling speed
+                    opacity: 1,
+                    createdAt: Date.now()
+                };
+
+                setPellets(prevPellets => [...prevPellets, newPellet]);
+            }
             return;
         }
     };
@@ -184,6 +250,12 @@ export function FishOverlay({ isOpen, onClose }: FishOverlayProps) {
         );
     };
 
+    // Handle feed button click
+    const handleFeedButtonClick = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        setIsFeedModeActive(prev => !prev);
+    };
+
     // Initialize and start animation when overlay opens
     useEffect(() => {
         if (isOpen) {
@@ -197,6 +269,14 @@ export function FishOverlay({ isOpen, onClose }: FishOverlayProps) {
             }
         };
     }, [isOpen, initializeFishes, animate]);
+
+    // Disable feed mode when overlay is closed and clear pellets
+    useEffect(() => {
+        if (!isOpen) {
+            setIsFeedModeActive(false);
+            setPellets([]); // Clear all pellets when overlay closes
+        }
+    }, [isOpen]);
 
     // Handle window resize
     useEffect(() => {
@@ -223,7 +303,7 @@ export function FishOverlay({ isOpen, onClose }: FishOverlayProps) {
     return (
         <div
             ref={containerRef}
-            className="fixed inset-0 z-[100] pointer-events-none"
+            className={`fixed inset-0 z-[100] ${isFeedModeActive ? 'pointer-events-auto' : 'pointer-events-none'}`}
             onClick={handleOverlayClick}
         >
             {/* Animated Fish */}
@@ -310,52 +390,40 @@ export function FishOverlay({ isOpen, onClose }: FishOverlayProps) {
                 );
             })}
 
+            {/* Fish Pellets */}
+            {pellets.map((pellet) => (
+                <div
+                    key={pellet.id}
+                    className="absolute pointer-events-none"
+                    style={{
+                        left: pellet.x - 10 / 2,
+                        top: pellet.y - 10 / 2,
+                        opacity: pellet.opacity,
+                    }}
+                >
+                    <div
+                        className="rounded-full bg-gradient-to-br from-yellow-400 to-orange-500 shadow-lg"
+                        style={{
+                            width: 10,
+                            height: 10,
+                        }}
+                    />
+                </div>
+            ))}
+
             {/* Dummy Buttons at Bottom */}
             <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex gap-4 pointer-events-auto">
                 <Button
                     variant="outline"
                     size="lg"
-                    className="bg-background/80 backdrop-blur-md border-2 hover:scale-105 transition-all duration-200"
-                    onClick={(e) => e.stopPropagation()}
+                    className={`bg-background/80 backdrop-blur-md border-2 transition-all duration-200 ${isFeedModeActive
+                        ? 'scale-105 bg-primary/20 border-primary shadow-lg'
+                        : 'hover:scale-105'
+                        }`}
+                    onClick={handleFeedButtonClick}
                 >
                     <Heart className="w-5 h-5 mr-2" />
-                    Feed Fish
-                </Button>
-                <Button
-                    variant="outline"
-                    size="lg"
-                    className="bg-background/80 backdrop-blur-md border-2 hover:scale-105 transition-all duration-200"
-                    onClick={(e) => e.stopPropagation()}
-                >
-                    <Star className="w-5 h-5 mr-2" />
-                    Collect Stars
-                </Button>
-                <Button
-                    variant="outline"
-                    size="lg"
-                    className="bg-background/80 backdrop-blur-md border-2 hover:scale-105 transition-all duration-200"
-                    onClick={(e) => e.stopPropagation()}
-                >
-                    <Zap className="w-5 h-5 mr-2" />
-                    Energy Boost
-                </Button>
-                <Button
-                    variant="outline"
-                    size="lg"
-                    className="bg-background/80 backdrop-blur-md border-2 hover:scale-105 transition-all duration-200"
-                    onClick={(e) => e.stopPropagation()}
-                >
-                    <Target className="w-5 h-5 mr-2" />
-                    Set Goal
-                </Button>
-                <Button
-                    variant="outline"
-                    size="lg"
-                    className="bg-background/80 backdrop-blur-md border-2 hover:scale-105 transition-all duration-200"
-                    onClick={(e) => e.stopPropagation()}
-                >
-                    <Trophy className="w-5 h-5 mr-2" />
-                    Achievements
+                    {isFeedModeActive ? 'Stop Feeding' : 'Feed Fish'}
                 </Button>
             </div>
 
