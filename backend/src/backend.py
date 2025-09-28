@@ -6,6 +6,7 @@ from typing import Union, Optional
 from fastapi import FastAPI
 from datetime import datetime, timedelta
 from pydantic import BaseModel
+from fishgame import Fish
 
 app = FastAPI()
 
@@ -121,3 +122,33 @@ def get_streak_achievements():
 @app.get("/total_task_achievements", response_model=list[TotalTasksAchievementSchema])
 def get_total_task_achievements():
     return total_task_achievements
+
+# In-memory storage for simplicity
+users_fish = {}
+
+# -------------------------
+# Update fishes categories
+# -------------------------
+@app.post("/users/{user_id}/fish")
+def create_fish(user_id: str, name: str, category: str):
+    fish = Fish(name, category)
+    users_fish.setdefault(user_id, []).append(fish)
+    return {"name": fish.name, "category": fish.category, "level": fish.level, "xp": fish.xp}
+
+# -------------------------
+# Update fish tasks
+# -------------------------
+@app.post("/users/{user_id}/fish/{fish_index}/complete_task")
+def complete_task(user_id: str, fish_index: int, num_tasks: int = 1):
+    fish = users_fish[user_id][fish_index]
+    fish.complete_task(num_tasks)
+    return {"name": fish.name, "level": fish.level, "xp": fish.xp}
+
+# -------------------------
+# Update fish achievements
+# -------------------------
+@app.post("/users/{user_id}/fish/{fish_index}/complete_achievement")
+def complete_achievement(user_id: str, fish_index: int):
+    fish = users_fish[user_id][fish_index]
+    fish.complete_achievement()
+    return {"name": fish.name, "level": fish.level, "xp": fish.xp, "achievements_completed": fish.achievements_completed}
