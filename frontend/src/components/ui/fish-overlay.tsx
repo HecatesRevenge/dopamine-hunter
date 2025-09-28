@@ -15,6 +15,7 @@ interface Fish {
     targetX: number;
     targetY: number;
     wanderTimer: number;
+    targetDirection: number;
 }
 
 interface FishOverlayProps {
@@ -47,19 +48,21 @@ export function FishOverlay({ isOpen, onClose }: FishOverlayProps) {
         const newFishes: Fish[] = [];
 
         for (let i = 0; i < FISH_COUNT; i++) {
+            const initialDirection = Math.random() * Math.PI * 2;
             newFishes.push({
                 id: i,
                 x: Math.random() * (container.clientWidth - 100),
                 y: Math.random() * (container.clientHeight - 100),
-                vx: (Math.random() - 0.5) * 2,
-                vy: (Math.random() - 0.5) * 2,
+                vx: Math.cos(initialDirection) * 0.5,
+                vy: Math.sin(initialDirection) * 0.5,
                 size: 40 + Math.random() * 30,
                 color: FISH_COLORS[i % FISH_COLORS.length],
-                direction: Math.random() * Math.PI * 2,
+                direction: initialDirection,
                 animationPhase: Math.random() * Math.PI * 2,
                 targetX: Math.random() * (container.clientWidth - 100),
                 targetY: Math.random() * (container.clientHeight - 100),
                 wanderTimer: Math.random() * 200 + 100,
+                targetDirection: initialDirection,
             });
         }
 
@@ -75,24 +78,54 @@ export function FishOverlay({ isOpen, onClose }: FishOverlayProps) {
 
         // Change direction when wander timer expires
         if (newFish.wanderTimer <= 0) {
-            newFish.targetX = Math.random() * (containerWidth - 100);
-            newFish.targetY = Math.random() * (containerHeight - 100);
+            // Select a new target near the old target
+            const wanderRadius = 150;
+            const angle = Math.random() * Math.PI * 2;
+            const distance = Math.random() * wanderRadius;
+
+            newFish.targetX = newFish.targetX + Math.cos(angle) * distance;
+            newFish.targetY = newFish.targetY + Math.sin(angle) * distance;
+
+            // Keep target within bounds
+            newFish.targetX = Math.max(0, Math.min(containerWidth - 100, newFish.targetX));
+            newFish.targetY = Math.max(0, Math.min(containerHeight - 100, newFish.targetY));
+
             newFish.wanderTimer = Math.random() * 200 + 100;
         }
 
-        // Move towards target with some randomness
+        // Calculate desired direction towards target
         const dx = newFish.targetX - newFish.x;
         const dy = newFish.targetY - newFish.y;
         const distance = Math.sqrt(dx * dx + dy * dy);
 
         if (distance > 5) {
-            const speed = 0.5 + Math.random() * 0.5;
-            newFish.vx = (dx / distance) * speed + (Math.random() - 0.5) * 0.3;
-            newFish.vy = (dy / distance) * speed + (Math.random() - 0.5) * 0.3;
+            // Smoothly interpolate towards target direction
+            const desiredDirection = Math.atan2(dy, dx);
+            const directionDiff = desiredDirection - newFish.targetDirection;
+
+            // Normalize angle difference to [-π, π]
+            let normalizedDiff = directionDiff;
+            while (normalizedDiff > Math.PI) normalizedDiff -= 2 * Math.PI;
+            while (normalizedDiff < -Math.PI) normalizedDiff += 2 * Math.PI;
+
+            // Smoothly update target direction
+            newFish.targetDirection += normalizedDiff * 0.008;
+
+            // Calculate velocity based on target direction
+            const speed = 0.3 + Math.random() * 0.2;
+            newFish.vx = Math.cos(newFish.targetDirection) * speed;
+            newFish.vy = Math.sin(newFish.targetDirection) * speed;
         } else {
-            // Add some random movement when near target
-            newFish.vx = (Math.random() - 0.5) * 1;
-            newFish.vy = (Math.random() - 0.5) * 1;
+            // Gentle random movement when near target
+            newFish.vx += (Math.random() - 0.5) * 0.1;
+            newFish.vy += (Math.random() - 0.5) * 0.1;
+
+            // Limit maximum speed
+            const currentSpeed = Math.sqrt(newFish.vx * newFish.vx + newFish.vy * newFish.vy);
+            if (currentSpeed > 0.5) {
+                newFish.vx = (newFish.vx / currentSpeed) * 0.5;
+                newFish.vy = (newFish.vy / currentSpeed) * 0.5;
+            }
         }
 
         // Update position
@@ -110,7 +143,7 @@ export function FishOverlay({ isOpen, onClose }: FishOverlayProps) {
         }
 
         // Update animation phase for accordion effect
-        newFish.animationPhase += 0.2; // Slower accordion animation
+        newFish.animationPhase += 0.1;
 
         return newFish;
     }, []);
@@ -198,7 +231,7 @@ export function FishOverlay({ isOpen, onClose }: FishOverlayProps) {
                 // Create accordion effect along the fish's body axis
                 const accordionScale = 1 + Math.sin(fish.animationPhase) * 0.15;
                 const accordionPerpendicular = 1 - Math.sin(fish.animationPhase) * 0.15;
-                const rotation = Math.atan2(fish.vy, fish.vx) * (180 / Math.PI);
+                const rotation = fish.targetDirection * (180 / Math.PI);
 
                 return (
                     <div
