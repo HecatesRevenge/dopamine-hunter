@@ -78,3 +78,12 @@ async def get_streak(user_id: int):
     if stats is None:
         raise HTTPException(status_code=404, detail="User not found")
     return stats
+
+@router.get("/{user_id}/stats/last-visit")
+async
+def get_last_visit(user_id: int):
+    """Get the last visit date for a user."""
+    stats = UserService.get_last_visit(user_id)
+    if stats is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    return stats

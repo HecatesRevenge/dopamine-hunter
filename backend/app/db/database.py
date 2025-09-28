@@ -72,6 +72,14 @@ def get_user_by_id(user_id: int) -> User | None:
             return user
     return None
 
+def get_user_by_username(username: str) -> User | None:
+    """Get a user by username"""
+    users = get_users()
+    for user in users:
+        if user.username == username:
+            return user
+    return None
+
 # Task functions
 def get_tasks(user_id: int | None = None) -> list[Task]:
     """Get all tasks, optionally filtered by user_id"""
