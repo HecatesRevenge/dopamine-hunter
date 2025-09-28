@@ -104,11 +104,12 @@ const Achievements: React.FC = () => {
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
-        backgroundAttachment: 'fixed'
+        backgroundAttachment: 'fixed',
+        filter: 'brightness(0.94)'
       }}
     >
       {/* Dark theme overlay */}
-      <div className="absolute inset-0 bg-black/67 dark:bg-black/77"></div>
+      <div className="absolute inset-0 bg-black/53 dark:bg-black/63"></div>
 
       <div className="relative z-10 flex flex-col min-h-screen">
         <Navigation currentPage="achievements" onNavigate={handleNavigate} />
@@ -117,7 +118,7 @@ const Achievements: React.FC = () => {
           <div className="max-w-7xl mx-auto">
             {/* Header */}
             <div className="text-center mb-8">
-              <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+              <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-blue-950 via-blue-900 to-blue-800 bg-clip-text text-transparent">
                 Achievements
               </h1>
               <div className="flex items-center justify-center gap-4 mb-6">
@@ -236,8 +237,8 @@ const Achievements: React.FC = () => {
                           <div className="flex items-start justify-between mb-2">
                             <div>
                               <h3 className={cn(
-                                "text-lg font-semibold",
-                                achievement.isUnlocked ? "text-foreground" : "text-muted-foreground"
+                                "text-lg font-semibold text-foreground",
+                                !achievement.isUnlocked && "opacity-70"
                               )}>
                                 {achievement.title}
                               </h3>
@@ -264,9 +265,8 @@ const Achievements: React.FC = () => {
                           {/* Progress Bar for Locked Achievements */}
                           {!achievement.isUnlocked && achievement.progress && (
                             <div className="mb-2">
-                              <div className="flex justify-between text-xs text-muted-foreground mb-1">
+                              <div className="text-xs text-muted-foreground mb-1">
                                 <span>Progress</span>
-                                <span>{achievement.progress.current} / {achievement.progress.total}</span>
                               </div>
                               <div className="w-full bg-muted rounded-full h-2">
                                 <div

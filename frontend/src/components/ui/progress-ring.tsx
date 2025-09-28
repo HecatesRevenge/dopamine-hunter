@@ -106,7 +106,7 @@ export function ProgressRing({
           <div className="absolute inset-0 flex items-center justify-center">
             <span className={cn(
               "font-bold bg-card-overlay/80 rounded px-1 text-xs backdrop-blur-sm",
-              "absolute -bottom-6"
+              "absolute -top-6"
             )}>
               {Math.round(progress)}%
             </span>
