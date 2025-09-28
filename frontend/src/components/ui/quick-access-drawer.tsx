@@ -21,14 +21,15 @@ export function QuickAccessDrawer({ className }: QuickAccessDrawerProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   const recentAchievements = [
-    { id: "1", title: "First Steps", description: "Complete your first task", isUnlocked: true, icon: "star" as const },
-    { id: "2", title: "Streak Master", description: "Maintain a 7-day streak", isUnlocked: true, icon: "trophy" as const },
+    { id: "1", title: "First Steps", description: "Complete your first task", isUnlocked: true, icon: "first-task" as const },
+    { id: "2", title: "Streak Master", description: "Maintain a 7-day streak", isUnlocked: true, icon: "silver" as const },
     { id: "3", title: "Focus Champion", description: "Complete 10 focus sessions", isUnlocked: false, icon: "target" as const },
     { id: "4", title: "Early Bird", description: "Complete morning routine 5 times", isUnlocked: false, icon: "zap" as const },
   ];
 
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
+      
       <SheetTrigger asChild>
         <Button 
           variant="ghost" 

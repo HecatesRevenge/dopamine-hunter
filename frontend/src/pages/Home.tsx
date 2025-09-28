@@ -1,4 +1,17 @@
-import { useState } from "react";
+/*
+ * IMPORTANT BACKEND INTEGRATION NOTE:
+ *
+ * The streak counter is currently set to increment on every page refresh for testing.
+ * When integrating with the backend:
+ *
+ * 1. REMOVE the temporary increment logic (lines 46-59)
+ * 2. RESTORE the commented original logic (lines 61-88)
+ * 3. REPLACE the mock API call with real backend endpoint
+ *
+ * See /frontend-documentation/backend-integration.md for complete integration guide.
+ */
+
+import { useState, useEffect } from "react";
 import { Navigation } from "@/components/ui/navigation";
 import { CalendarWidget } from "@/components/calendar-widget";
 import { FocusTimer } from "@/components/ui/focus-timer";
@@ -7,12 +20,12 @@ import { ProgressRing } from "@/components/ui/progress-ring";
 import { AchievementBadge } from "@/components/ui/achievement-badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { 
-  Flame, 
-  Trophy, 
-  Target, 
-  Clock, 
-  TrendingUp, 
+import {
+  Flame,
+  Trophy,
+  Target,
+  Clock,
+  TrendingUp,
   Star,
   ChevronRight,
   Zap
@@ -20,6 +33,81 @@ import {
 
 const Home = () => {
   const [currentPage, setCurrentPage] = useState("home");
+  const [streakData, setStreakData] = useState({
+    totalVisits: 0,
+    currentDailyStreak: 0,
+    bestStreak: 0,
+    lastVisitDate: null as string | null
+  });
+
+  // Mock API function - Backend team will replace this
+  const updateStreakCounter = async () => {
+    // TODO: Replace with actual API call
+    // const response = await fetch('/api/users/current/streak/visit', { method: 'POST' });
+    // const data = await response.json();
+
+    // Mock implementation for now
+    const today = new Date().toDateString();
+    const savedData = localStorage.getItem('streakData');
+    let currentData = savedData ? JSON.parse(savedData) : {
+      totalVisits: 0,
+      currentDailyStreak: 0,
+      bestStreak: 0,
+      lastVisitDate: null
+    };
+
+    // TEMPORARY: Increment on every page refresh for testing
+    // TODO: Remove this when backend is integrated - should only increment once per day
+
+    // Always increment for demo purposes
+    currentData.currentDailyStreak += 1;
+    currentData.totalVisits += 1;
+    currentData.lastVisitDate = today;
+
+    // Update best streak
+    if (currentData.currentDailyStreak > currentData.bestStreak) {
+      currentData.bestStreak = currentData.currentDailyStreak;
+    }
+
+    localStorage.setItem('streakData', JSON.stringify(currentData));
+
+    /* ORIGINAL CODE - Restore when backend is ready:
+    if (currentData.lastVisitDate !== today) {
+      // New day visit
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+
+      if (currentData.lastVisitDate === yesterday.toDateString()) {
+        // Consecutive day - increment streak
+        currentData.currentDailyStreak += 1;
+      } else if (currentData.lastVisitDate !== null) {
+        // Missed a day - reset streak
+        currentData.currentDailyStreak = 1;
+      } else {
+        // First visit
+        currentData.currentDailyStreak = 1;
+      }
+
+      currentData.totalVisits += 1;
+      currentData.lastVisitDate = today;
+
+      // Update best streak
+      if (currentData.currentDailyStreak > currentData.bestStreak) {
+        currentData.bestStreak = currentData.currentDailyStreak;
+      }
+
+      localStorage.setItem('streakData', JSON.stringify(currentData));
+    }
+    */
+
+    setStreakData(currentData);
+    return currentData;
+  };
+
+  // Track page visit on component mount
+  useEffect(() => {
+    updateStreakCounter();
+  }, []);
 
   const recentAchievements = [
     { id: "1", title: "First Steps", description: "Complete your first task", isUnlocked: true, icon: "star" as const },
@@ -28,11 +116,23 @@ const Home = () => {
     { id: "4", title: "Early Bird", description: "Complete morning routine 5 times", isUnlocked: false, icon: "zap" as const },
   ];
 
+  // Calculate streak progress (cap at 100% for display, target of 30 days for "mastery")
+  const streakProgress = Math.min((streakData.currentDailyStreak / 30) * 100, 100);
+
   const inProgressTasks = [
     { title: "Morning Routine", progress: 75, color: "success" as const },
     { title: "Study Session", progress: 45, color: "primary" as const },
-    { title: "Cleaning Tasks", progress: 90, color: "accent" as const },
-    { title: "Meditation", progress: 30, color: "streak" as const },
+    { title: "Cleaning Path", progress: 90, color: "accent" as const },
+    {
+      title: "Total Streak",
+      progress: streakProgress,
+      color: "streak" as const,
+      streakData: {
+        current: streakData.currentDailyStreak,
+        best: streakData.bestStreak,
+        total: streakData.totalVisits
+      }
+    },
   ];
 
   return (

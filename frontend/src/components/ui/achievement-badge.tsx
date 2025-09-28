@@ -3,7 +3,7 @@ import { Star, Trophy, Target, Zap, Award } from "lucide-react";
 import { ReactNode } from "react";
 
 interface AchievementBadgeProps {
-  icon?: "star" | "trophy" | "target" | "zap" | "award";
+  icon?: "star" | "trophy" | "target" | "zap" | "award" | "first-task" | "silver" | "gold";
   title: string;
   description?: string;
   isUnlocked?: boolean;
@@ -21,6 +21,13 @@ const iconMap = {
   award: Award,
 };
 
+// Custom image icons
+const customIconMap = {
+  "first-task": "/placeholders/achievements/achievement-first-task-32x32.png",
+  "gold": "/placeholders/achievements/gold_1_32x32.png",
+  "silver": "/placeholders/achievements/silver_1_32x32.png",
+};
+
 const sizeClasses = {
   sm: "w-12 h-12",
   md: "w-16 h-16",
@@ -29,8 +36,14 @@ const sizeClasses = {
 
 const iconSizeClasses = {
   sm: "w-5 h-5",
-  md: "w-6 h-6", 
+  md: "w-6 h-6",
   lg: "w-8 h-8",
+};
+
+const imageSizeClasses = {
+  sm: "w-6 h-6",
+  md: "w-8 h-8",
+  lg: "w-10 h-10",
 };
 
 export function AchievementBadge({
@@ -43,7 +56,9 @@ export function AchievementBadge({
   onClick,
   children
 }: AchievementBadgeProps) {
-  const IconComponent = iconMap[icon];
+  const IconComponent = iconMap[icon as keyof typeof iconMap];
+  const customIconPath = customIconMap[icon as keyof typeof customIconMap];
+  const isCustomIcon = !!customIconPath;
 
   return (
     <div
@@ -56,19 +71,45 @@ export function AchievementBadge({
       {/* Badge Circle */}
       <div
         className={cn(
-          "achievement-badge flex items-center justify-center rounded-full",
+          "achievement-badge flex items-center justify-center rounded-full relative overflow-hidden",
           sizeClasses[size],
-          isUnlocked 
-            ? "bg-achievement shadow-glow" 
-            : "bg-muted/50 border-2 border-dashed border-muted-foreground/30"
+          "bg-ocean",
+          isUnlocked ? "shadow-glow" : ""
         )}
+        
       >
-        <IconComponent 
-          className={cn(
-            iconSizeClasses[size],
-            isUnlocked ? "text-white" : "text-muted-foreground/50"
-          )} 
-        />
+        {/* Greyed-out overlay for locked badges - placed before icons so they affect icons */}
+        {!isUnlocked && (
+          <div className="absolute inset-0 bg-black/50 rounded-full mix-blend-multiply z-10" />
+        )}
+
+        {/* Desaturate effect for locked badges - placed before icons */}
+        {!isUnlocked && (
+          <div className="absolute inset-0 bg-gray-500/40 rounded-full mix-blend-overlay z-10" />
+        )}
+
+        {isCustomIcon ? (
+          <img
+            src={customIconPath}
+            alt={title}
+            className={cn(
+              imageSizeClasses[size],
+              "relative z-0",
+              isUnlocked ? "opacity-100" : "opacity-100"
+            )}
+            style={{ imageRendering: 'pixelated' }}
+          />
+        ) : (
+          IconComponent && (
+            <IconComponent
+              className={cn(
+                iconSizeClasses[size],
+                "relative z-0",
+                isUnlocked ? "text-white" : "text-white"
+              )}
+            />
+          )
+        )}
       </div>
 
       {/* Tooltip */}
